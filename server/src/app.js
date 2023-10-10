@@ -9,6 +9,7 @@ const port = process.env.PORT;
 const database = require("./database");
 const connect = async () => {
   await database.connect();
+  await database.seedData();
   console.log(`Backend Server listening on port ${port} .....`);
 };
 app.listen(port, connect);
