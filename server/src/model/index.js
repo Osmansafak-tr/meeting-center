@@ -1,3 +1,4 @@
 module.exports = {
-  User: require("./user"),
+  User: require("./user/index"),
+  UserMethods: require("./user/method"),
 };
