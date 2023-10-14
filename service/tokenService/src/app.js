@@ -9,6 +9,9 @@ const database = require("./database");
 
 app.use(bodyParser.json());
 
+const router = require("./router");
+app.use("/", router);
+
 const connect = async () => {
   await database.connect();
   console.log(`Token Service listening on ${port} ......`);
