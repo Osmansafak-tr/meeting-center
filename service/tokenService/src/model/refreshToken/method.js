@@ -20,7 +20,9 @@ exports.create = async (tokenContent) => {
 
 exports.update = async (filter, tokenContent) => {
   const refreshToken = await this.getOne(filter);
+  if (refreshToken == null) throw new Error("Refresh token can not found.");
   refreshToken.tokenContent = tokenContent;
+  refreshToken.updatedAt = Date.now();
   refreshToken.save();
 };
 

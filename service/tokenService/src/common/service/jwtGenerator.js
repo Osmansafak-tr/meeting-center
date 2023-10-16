@@ -17,3 +17,16 @@ exports.generateRefreshToken = (tokenContent) => {
   const refreshToken = generateToken(tokenContent, secretKey, tokenOpt);
   return refreshToken;
 };
+
+exports.generateBothTokens = (tokenContent) => {
+  const accessToken = this.generateAccessToken(tokenContent);
+  const refreshToken = this.generateRefreshToken(tokenContent);
+  const tokens = { accessToken: accessToken, refreshToken: refreshToken };
+  return tokens;
+};
+
+exports.verifyRefreshToken = (refreshToken) => {
+  const secretKey = process.env.Refresh_TOKEN_SECRET_KEY;
+  const decoded = jwt.verify(refreshToken, secretKey);
+  return decoded.userId;
+};
