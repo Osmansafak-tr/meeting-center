@@ -10,6 +10,8 @@ const database = require("./database");
 app.use(bodyParser.json());
 
 const router = require("./router");
+const { authenticate } = require("./common/middleware");
+app.use("*", authenticate);
 app.use("/", router);
 
 const connect = async () => {
