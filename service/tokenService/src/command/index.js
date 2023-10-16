@@ -18,3 +18,8 @@ exports.RefreshTokens = async (refreshToken) => {
   );
   return tokens;
 };
+
+exports.DeleteToken = async (refreshToken) => {
+  const filter = { tokenContent: refreshToken };
+  await RefreshTokenMethods.delete(filter);
+};
