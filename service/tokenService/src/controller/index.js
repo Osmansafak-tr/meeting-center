@@ -1,7 +1,7 @@
 const commands = require("../command");
 
 exports.VerifyAuth = async (req, res) => {
-  const { accessToken } = req.body;
+  const { accessToken } = req.params;
   const data = await commands.VerifyAuth(accessToken);
   const result = { userId: data.userId };
   return res.status(200).json(result);
