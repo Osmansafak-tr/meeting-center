@@ -3,6 +3,8 @@ const router = express.Router();
 const controller = require("../controller");
 const { catchError } = require("../common/util");
 
+router.get("/auth/verify", catchError(controller.VerifyAuth));
+
 router.post("/connect/token", catchError(controller.GetTokens));
 
 router.put("/token/:refreshToken", catchError(controller.RefreshTokens));

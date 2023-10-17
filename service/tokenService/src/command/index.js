@@ -1,6 +1,11 @@
 const { RefreshTokenMethods } = require("../model");
 const { JwtGenerator } = require("../common/service");
 
+exports.VerifyAuth = async (accessToken) => {
+  const userId = JwtGenerator.verifyAccessToken(accessToken);
+  return { userId: userId };
+};
+
 exports.GetTokens = async (userId) => {
   const tokenContent = { userId: userId };
   const tokens = JwtGenerator.generateBothTokens(tokenContent);
