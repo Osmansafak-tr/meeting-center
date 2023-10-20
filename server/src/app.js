@@ -2,14 +2,18 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const bodyParser = require("body-parser");
+// My imports
+const port = process.env.PORT;
+const database = require("./database");
+const { errorHandler } = require("./common/middleware");
 
 app.use(bodyParser.json());
 
 const routers = require("./router");
 app.use("/account", routers.AccountRouter);
 
-const port = process.env.PORT;
-const database = require("./database");
+app.use(errorHandler);
+
 const connect = async () => {
   await database.connect();
   await database.seedData();
