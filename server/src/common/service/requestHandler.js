@@ -15,8 +15,8 @@ class RequestHandler {
   }
 }
 
-exports.tokenService = new RequestHandler(process.env.TOKEN_SERVICE_URL, {
-  Authorization: `${process.env.TOKEN_SERVICE_SHARED_SECRET_KEY}`,
+exports.tokenService = new RequestHandler(process.env.TOKEN_API_URL, {
+  Authorization: `${process.env.TOKEN_API_SHARED_SECRET_KEY}`,
 });
 
 // module.exports = RequestHandler;
