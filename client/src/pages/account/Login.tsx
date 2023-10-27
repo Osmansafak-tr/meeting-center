@@ -3,6 +3,7 @@ import FormInput from "../../components/FormInput";
 import { useState, ChangeEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import cookieHandler from "../../common/services/cookieHandler";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,15 +25,12 @@ const Login = () => {
     try {
       const response = await axios.post(url, body);
       const { accessToken } = response.data;
-      createAuthCookie(accessToken);
-      console.log(response.data);
+      cookieHandler.setAuthCookie(accessToken);
       navigate("/");
     } catch (error: any) {
       handleReqError(error);
     }
   };
-
-  const createAuthCookie = (accessToken: any) => {};
 
   const handleReqError = (error: any) => {
     const { errorCode, name, message } = error.response.data;
