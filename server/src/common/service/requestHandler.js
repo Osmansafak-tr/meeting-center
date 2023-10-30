@@ -6,6 +6,12 @@ class RequestHandler {
     this.headers = headers;
   }
 
+  async get(url, headers = this.headers) {
+    const targetUrl = this.baseUrl + url;
+    const response = await axios.get(targetUrl, { headers: headers });
+    return response;
+  }
+
   async post(url, body, headers = this.headers) {
     const targetUrl = this.baseUrl + url;
     const response = await axios.post(targetUrl, body, {

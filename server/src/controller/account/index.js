@@ -5,3 +5,9 @@ exports.Login = async (req, res) => {
   const tokenJson = await AccountCommands.Login(email, password);
   return res.status(200).json(tokenJson);
 };
+
+exports.VerifyAuth = async (req, res) => {
+  const { accessToken } = req.params;
+  const data = await AccountCommands.VerifyAuth(accessToken);
+  return res.status(200).json(data);
+};

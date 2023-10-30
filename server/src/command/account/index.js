@@ -15,3 +15,10 @@ exports.Login = async (email, password) => {
   await UserMethods.updateOne({ _id: userId }, { refreshToken: refreshToken });
   return { accessToken: accessToken };
 };
+
+exports.VerifyAuth = async (accessToken) => {
+  const params = { accessToken: accessToken };
+  const url = `/auth/verify/${accessToken}`;
+  const response = await requestHandler.get(url, params);
+  return response.data;
+};
