@@ -5,10 +5,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 // My imports
 const port = process.env.PORT;
-const database = require("./database");
-const { errorHandler } = require("./common/middleware");
-
 const whitelist = process.env.CORS_WHITELIST;
+const database = require("./database");
+const { errorHandler, handleAuth } = require("./common/middleware");
+const { apiAuth } = handleAuth;
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -23,6 +24,7 @@ app.use(
 app.use(bodyParser.json());
 
 const routers = require("./router");
+app.use("*", apiAuth);
 app.use("/account", routers.AccountRouter);
 
 app.use(errorHandler);
