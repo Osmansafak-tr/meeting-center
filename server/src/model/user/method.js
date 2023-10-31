@@ -14,11 +14,18 @@ exports.getAll = async (selection = defaultSelection) => {
 exports.getOne = async ({
   filter,
   selection = defaultSelection,
-  appError = new AppError(DATA_NOT_FOUND, 404, "User not found."),
+  errorFunction = (user) => {
+    if (user == null)
+      throw new AppError(DATA_NOT_FOUND, 404, "User not found.");
+  },
 }) => {
   const user = await User.findOne(filter).select(selection);
-  if (user == null) throw appError;
+  errorFunction(user);
   return user;
+};
+
+exports.createOne = async (model) => {
+  await User.create(model);
 };
 
 exports.updateOne = async (filter, model) => {
@@ -33,8 +40,13 @@ exports.updateOne = async (filter, model) => {
 exports.verifyAuth = async (email, password) => {
   const filter = { email: email };
 
-  const appError = new AppError(INVALID_EMAIL, 401, "Invalid email");
-  const user = await this.getOne({ filter: filter, appError: appError });
+  const errorFunction = (user) => {
+    if (user == null) throw new AppError(INVALID_EMAIL, 401, "Invalid email");
+  };
+  const user = await this.getOne({
+    filter: filter,
+    errorFunction: errorFunction,
+  });
 
   const result = await PasswordEncrypt.verify(password, user.password);
   if (!result) throw new AppError(INVALID_PASSWORD, 401, "Invalid password");
