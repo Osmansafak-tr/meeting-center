@@ -24,3 +24,9 @@ exports.Login = async (req, res) => {
   const tokenJson = await AccountCommands.Login(email, password);
   return res.status(200).json(tokenJson);
 };
+
+exports.Logout = async (req, res) => {
+  const { refreshToken, _id } = req.user;
+  await AccountCommands.Logout(_id, refreshToken);
+  return res.status(200).json({ message: "User successfully logged out." });
+};

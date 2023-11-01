@@ -66,3 +66,14 @@ exports.Login = async (email, password) => {
   await UserMethods.updateOne({ _id: userId }, { refreshToken: refreshToken });
   return { accessToken: accessToken };
 };
+
+exports.Logout = async (userId, refreshToken) => {
+  // update users refresh token
+  const filter = { _id: userId };
+  const model = { refreshToken: "" };
+  await UserMethods.updateOne(filter, model);
+
+  // delete refreshToken from database
+  const url = "/token/" + refreshToken;
+  await requestHandler.delete(url);
+};

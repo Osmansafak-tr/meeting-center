@@ -19,6 +19,12 @@ class RequestHandler {
     });
     return response;
   }
+
+  async delete(url, headers = this.headers) {
+    const targetUrl = this.baseUrl + url;
+    const response = await axios.delete(targetUrl, { headers: headers });
+    return response;
+  }
 }
 
 exports.tokenService = new RequestHandler(process.env.TOKEN_API_URL, {

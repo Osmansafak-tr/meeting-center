@@ -8,7 +8,7 @@ const port = process.env.PORT;
 const whitelist = process.env.CORS_WHITELIST;
 const database = require("./database");
 const { errorHandler, handleAuth } = require("./common/middleware");
-const { apiAuth } = handleAuth;
+const { apiAuth, userAuthenticate } = handleAuth;
 
 app.use(
   cors({
@@ -24,7 +24,7 @@ app.use(
 app.use(bodyParser.json());
 
 const routers = require("./router");
-app.use("*", apiAuth);
+app.use("*", apiAuth, userAuthenticate);
 app.use("/account", routers.AccountRouter);
 
 app.use(errorHandler);
