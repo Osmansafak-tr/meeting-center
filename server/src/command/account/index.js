@@ -18,13 +18,6 @@ const checkSameData = async (
   });
 };
 
-exports.VerifyAuth = async (accessToken) => {
-  const params = { accessToken: accessToken };
-  const url = `/auth/verify/${accessToken}`;
-  const response = await requestHandler.get(url, params);
-  return response.data;
-};
-
 exports.Register = async (userModel) => {
   const { username, email, password, name, surname } = userModel;
   // Check if this email is available

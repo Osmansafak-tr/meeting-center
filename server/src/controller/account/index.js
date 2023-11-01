@@ -1,8 +1,10 @@
 const { AccountCommands } = require("../../command");
+const { JwtHandler } = require("../../common/service");
 
 exports.VerifyAuth = async (req, res) => {
   const { accessToken } = req.params;
-  const data = await AccountCommands.VerifyAuth(accessToken);
+  JwtHandler.verifyAccessToken(accessToken);
+  const data = { isAuthenticated: true };
   return res.status(200).json(data);
 };
 
