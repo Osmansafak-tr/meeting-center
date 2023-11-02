@@ -1,7 +1,7 @@
-const { JwtHandler } = require("../../common/service");
-const { UserMethods } = require("../../model");
-const { AppError } = require("../class");
-const { CUSTOM_ERROR } = require("../constant").ErrorConstants;
+const { JwtHandler } = require("../common/service");
+const { UserMethods } = require("../model");
+const { AppError } = require("../common/class");
+const { CUSTOM_ERROR } = require("../common/constant").ErrorConstants;
 
 exports.apiAuth = async (req, res, next) => {
   const apiKey = req.headers["x-api-key"];

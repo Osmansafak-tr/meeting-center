@@ -1,8 +1,8 @@
-const { UserMethods } = require("../../model");
-const { RequestHandler, PasswordEncrypt } = require("../../common/service");
-const { AppError } = require("../../common/class");
+const { UserMethods } = require("../../../model");
+const { RequestHandler, PasswordEncrypt } = require("../../../common/service");
+const { AppError } = require("../../../common/class");
 const { INVALID_EMAIL, INVALID_USERNAME } =
-  require("../../common/constant").ErrorConstants;
+  require("../../../common/constant").ErrorConstants;
 const requestHandler = RequestHandler.tokenService;
 
 const checkSameData = async (

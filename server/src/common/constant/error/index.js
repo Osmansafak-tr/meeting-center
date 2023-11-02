@@ -13,6 +13,7 @@ module.exports = {
   INVALID_EMAIL: new ErrorConstant(ErrorNames.FORM, 201),
   INVALID_PASSWORD: new ErrorConstant(ErrorNames.FORM, 202),
   INVALID_USERNAME: new ErrorConstant(ErrorNames.FORM, 203),
-  DATA_ERROR: new ErrorConstant(ErrorNames.Data, 300),
-  DATA_NOT_FOUND: new ErrorConstant(ErrorNames.Data, 301),
+  DATA_ERROR: new ErrorConstant(ErrorNames.DATA, 300),
+  DATA_NOT_FOUND: new ErrorConstant(ErrorNames.DATA, 301),
+  VALIDATION_ERROR: new ErrorConstant(ErrorNames.VALIDATION, 400),
 };

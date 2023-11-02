@@ -1,5 +1,6 @@
 module.exports = {
   CUSTOM: "CustomError",
   FORM: "FormError",
-  Data: "DataError",
+  DATA: "DataError",
+  VALIDATION: "ValidationError",
 };
