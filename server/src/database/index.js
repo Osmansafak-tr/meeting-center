@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { User } = require("../model");
-const { PasswordEncrypt } = require("../common/service");
+const { PasswordEncrypt } = require("../service");
 
 exports.connect = async () => {
   const uri = process.env.MONGODB_URI;

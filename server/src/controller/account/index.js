@@ -1,5 +1,5 @@
 const { AccountCommands } = require("../commands");
-const { JwtHandler } = require("../../common/service");
+const { JwtHandler } = require("../../service");
 
 exports.VerifyAuth = async (req, res) => {
   const { accessToken } = req.params;

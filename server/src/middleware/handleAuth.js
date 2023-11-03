@@ -1,4 +1,4 @@
-const { JwtHandler } = require("../common/service");
+const { JwtHandler } = require("../service");
 const { UserMethods } = require("../model");
 const { AppError } = require("../common/class");
 const { CUSTOM_ERROR } = require("../common/constant").ErrorConstants;

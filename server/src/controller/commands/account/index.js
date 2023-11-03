@@ -1,5 +1,5 @@
 const { UserMethods } = require("../../../model");
-const { RequestHandler, PasswordEncrypt } = require("../../../common/service");
+const { RequestHandler, PasswordEncrypt } = require("../../../service");
 const { AppError } = require("../../../common/class");
 const { INVALID_EMAIL, INVALID_USERNAME } =
   require("../../../common/constant").ErrorConstants;

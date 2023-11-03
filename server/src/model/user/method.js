@@ -3,7 +3,7 @@ const { checkValidValue } = require("../function");
 const { AppError } = require("../../common/class");
 const { DATA_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD } =
   require("../../common/constant").ErrorConstants;
-const { PasswordEncrypt } = require("../../common/service");
+const { PasswordEncrypt } = require("../../service");
 const defaultSelection = "-__v";
 
 exports.getAll = async (selection = defaultSelection) => {

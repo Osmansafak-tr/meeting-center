@@ -1,31 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const routerHandler = require("../../service/routerHandler")(router);
+// Other imports
 const controller = require("../../controller").AccountController;
 const validator = require("../../validator").AccountValidator;
-const { catchError } = require("../../common/util");
 const middlewares = require("../../middleware");
-const { handleValResult } = middlewares;
 const { userAuthorize } = middlewares.handleAuth;
 
-router.get(
+routerHandler.getVal(
   "/auth/verify/:accessToken",
   validator.VerifyAuth,
-  handleValResult,
-  catchError(controller.VerifyAuth)
+  controller.VerifyAuth
 );
 
-router.post(
-  "/",
-  validator.Login,
-  handleValResult,
-  catchError(controller.Login)
-);
-router.post(
-  "/register",
-  validator.Register,
-  handleValResult,
-  catchError(controller.Register)
-);
-router.post("/logout", userAuthorize, catchError(controller.Logout));
+routerHandler.postVal("/", validator.Login, controller.Login);
+routerHandler.postVal("/register", validator.Register, controller.Register);
+routerHandler.post("/logout", controller.Logout, userAuthorize);
 
 module.exports = router;
