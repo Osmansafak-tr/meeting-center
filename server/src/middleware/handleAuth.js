@@ -2,6 +2,7 @@ const { JwtHandler } = require("../service");
 const { UserMethods } = require("../model");
 const { AppError } = require("../common/class");
 const { CUSTOM_ERROR } = require("../common/constant").ErrorConstants;
+const { catchError } = require("../common/util");
 
 exports.apiAuth = async (req, res, next) => {
   const apiKey = req.headers["x-api-key"];
@@ -10,7 +11,7 @@ exports.apiAuth = async (req, res, next) => {
   else return res.status(401).json({ message: "Unauthorized api key." });
 };
 
-exports.userAuthenticate = async (req, res, next) => {
+exports.userAuthenticate = catchError(async (req, res, next) => {
   // get access token
   const authHeader = req.headers["authorization"];
   if (!authHeader) return next();
@@ -30,7 +31,7 @@ exports.userAuthenticate = async (req, res, next) => {
 
   req.user = user;
   return next();
-};
+});
 
 exports.userAuthorize = async (req, res, next) => {
   if (!req.user) return next(new AppError(CUSTOM_ERROR, 401, "Not Authorized"));
