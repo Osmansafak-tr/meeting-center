@@ -7,7 +7,12 @@ const middlewares = require("../../middleware");
 const { handleValResult } = middlewares;
 const { userAuthorize } = middlewares.handleAuth;
 
-router.get("/auth/verify/:accessToken", catchError(controller.VerifyAuth));
+router.get(
+  "/auth/verify/:accessToken",
+  validator.VerifyAuth,
+  handleValResult,
+  catchError(controller.VerifyAuth)
+);
 
 router.post(
   "/",
@@ -15,7 +20,12 @@ router.post(
   handleValResult,
   catchError(controller.Login)
 );
-router.post("/register", catchError(controller.Register));
+router.post(
+  "/register",
+  validator.Register,
+  handleValResult,
+  catchError(controller.Register)
+);
 router.post("/logout", userAuthorize, catchError(controller.Logout));
 
 module.exports = router;
