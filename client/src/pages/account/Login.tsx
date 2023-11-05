@@ -34,8 +34,10 @@ const Login = () => {
 
   const handleReqError = (error: any) => {
     console.log(error);
-    const { errorCode, name, message } = error.response.data;
+    const { data } = error.response;
+    const { errorCode, name } = data;
     if (name === "FormError") {
+      const { message } = data;
       if (errorCode == 201) {
         setErrorEmail(message);
         setErrorPassword("");
@@ -43,6 +45,15 @@ const Login = () => {
         setErrorPassword(message);
         setErrorEmail("");
       }
+    }
+
+    if (name === "ValidationError") {
+      const { errors } = data;
+      errors.forEach((error: any) => {
+        console.log(error.path);
+        if (error.path === "password") setErrorPassword(error.msg);
+        else if (error.path === "email") setErrorEmail(error.msg);
+      });
     }
   };
 
@@ -61,14 +72,7 @@ const Login = () => {
             onChange={emailOnChange}
           />
 
-          <div className="row">
-            <p className="error-text col">{errorPassword}</p>
-            <div className="col mb-1 text-right">
-              <a className="custom-link" href="#!">
-                Forgot password?
-              </a>
-            </div>
-          </div>
+          <p className="error-text col">{errorPassword}</p>
 
           {/* Password input */}
           <FormInput
@@ -78,6 +82,12 @@ const Login = () => {
             labelText="Password"
             onChange={passwordOnChange}
           />
+
+          <div className="col mb-2 text-right">
+            <a className="custom-link" href="#!">
+              Forgot password?
+            </a>
+          </div>
 
           {/*Submit button*/}
           <button

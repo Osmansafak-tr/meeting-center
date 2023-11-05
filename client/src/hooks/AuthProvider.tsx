@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { backendReqHandler } from "../services/reqHandler";
+import cookieHandler from "../services/cookieHandler";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,9 +24,18 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const verifyAuth = () => {
-    // TODO => Add verify auth function
-    setIsAuthenticated(true);
+  const verifyAuth = async () => {
+    const accessToken = cookieHandler.getAuthCookie();
+    console.log(accessToken);
+    if (!accessToken) return;
+    try {
+      const url = `/account/auth/verify/${accessToken}`;
+      const response = await backendReqHandler.get(url);
+      const { isAuthenticated } = response.data;
+      setIsAuthenticated(isAuthenticated);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

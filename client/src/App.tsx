@@ -2,7 +2,11 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import PageNotFound from "./pages/error/PageNotFound";
 import Login from "./pages/account/Login";
+import { AuthProvider, useAuth } from "./hooks/AuthProvider";
+
 function App() {
+  const { verifyAuth } = useAuth();
+  verifyAuth();
   return (
     <>
       <Routes>
