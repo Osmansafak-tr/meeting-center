@@ -1,9 +1,10 @@
 import "./login.css";
 import FormInput from "../../components/FormInput";
 import { useState, ChangeEvent } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import cookieHandler from "../../services/cookieHandler";
+import { backendReqHandler } from "../../services/reqHandler";
+const reqHandler = backendReqHandler;
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,11 +20,10 @@ const Login = () => {
     setPassword(event.target.value);
   };
   const buttonOnClick = async () => {
-    const backendOrigin = import.meta.env.VITE_BACKEND_ORIGIN;
-    const url = backendOrigin + "/account";
     const body = { email: email, password: password };
     try {
-      const response = await axios.post(url, body);
+      // const response = await axios.post(url, body);
+      const response = await reqHandler.post("/account", body);
       const { accessToken } = response.data;
       cookieHandler.setAuthCookie(accessToken);
       navigate("/");
@@ -33,6 +33,7 @@ const Login = () => {
   };
 
   const handleReqError = (error: any) => {
+    console.log(error);
     const { errorCode, name, message } = error.response.data;
     if (name === "FormError") {
       if (errorCode == 201) {
