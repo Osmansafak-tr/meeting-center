@@ -3,7 +3,7 @@ import FormInput from "../../components/FormInput";
 import { useState, ChangeEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import cookieHandler from "../../common/services/cookieHandler";
+import cookieHandler from "../../services/cookieHandler";
 
 const Login = () => {
   const [email, setEmail] = useState("");
