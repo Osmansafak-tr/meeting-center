@@ -9,8 +9,7 @@ const reqHandler = backendReqHandler;
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorPassword, setErrorPassword] = useState("");
+  const [formErrors, setFormErrors] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
   const emailOnChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -20,9 +19,9 @@ const Login = () => {
     setPassword(event.target.value);
   };
   const buttonOnClick = async () => {
+    console.log(formErrors);
     const body = { email: email, password: password };
     try {
-      // const response = await axios.post(url, body);
       const response = await reqHandler.post("/account", body);
       const { accessToken } = response.data;
       cookieHandler.setAuthCookie(accessToken);
@@ -38,22 +37,22 @@ const Login = () => {
     const { errorCode, name } = data;
     if (name === "FormError") {
       const { message } = data;
-      if (errorCode == 201) {
-        setErrorEmail(message);
-        setErrorPassword("");
-      } else if (errorCode == 202) {
-        setErrorPassword(message);
-        setErrorEmail("");
-      }
+      const err = { email: "", password: "" };
+      if (errorCode == 201) err.email = message;
+      else if (errorCode == 202) err.password = message;
+      console.log("Err: ", err);
+      setFormErrors(err);
     }
 
     if (name === "ValidationError") {
       const { errors } = data;
+      const err = { email: "", password: "" };
       errors.forEach((error: any) => {
         console.log(error.path);
-        if (error.path === "password") setErrorPassword(error.msg);
-        else if (error.path === "email") setErrorEmail(error.msg);
+        if (error.path === "password") err.password = error.msg;
+        else if (error.path === "email") err.email = error.msg;
       });
+      setFormErrors(err);
     }
   };
 
@@ -62,7 +61,6 @@ const Login = () => {
       <div className="form-login">
         <h2>Login Form</h2>
         <form>
-          <p className="error-text">{errorEmail}</p>
           {/* Email input */}
           <FormInput
             inputId="email"
@@ -70,9 +68,8 @@ const Login = () => {
             placeholder="Your Email"
             labelText="Email Address"
             onChange={emailOnChange}
+            errorMessage={formErrors.email}
           />
-
-          <p className="error-text col">{errorPassword}</p>
 
           {/* Password input */}
           <FormInput
@@ -81,6 +78,7 @@ const Login = () => {
             placeholder="Your Password"
             labelText="Password"
             onChange={passwordOnChange}
+            errorMessage={formErrors.password}
           />
 
           <div className="col mb-2 text-right">
@@ -101,7 +99,7 @@ const Login = () => {
           <div className="col text-center">
             <p>
               Not a Member?{" "}
-              <a className="custom-link" href="#!">
+              <a className="custom-link" href="/account/register">
                 Register
               </a>
             </p>

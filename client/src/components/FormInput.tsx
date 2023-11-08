@@ -6,10 +6,12 @@ interface Props {
   placeholder: string;
   labelText: string;
   onChange: ChangeEventHandler;
+  errorMessage: string;
 }
 
 const FormInput = (props: Props) => {
-  const { inputId, inputType, placeholder, labelText, onChange } = props;
+  const { inputId, inputType, placeholder, labelText, onChange, errorMessage } =
+    props;
   return (
     <div className="form-floating mb-4">
       <input
@@ -20,6 +22,8 @@ const FormInput = (props: Props) => {
         onChange={onChange}
       />
       <label htmlFor={inputId}>{labelText}</label>
+      {/* <span className="error-text">{errorMessage}</span> */}
+      <p className="error-text">{errorMessage}</p>
     </div>
   );
 };
