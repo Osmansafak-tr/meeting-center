@@ -14,10 +14,15 @@ class CookieHandler {
     const cookie = cookies.get(this._authCookieName);
     return cookie;
   }
+
   setAuthCookie(accessToken: string) {
     cookies.set(this._authCookieName, accessToken, {
       expires: this._defaultExpireDate,
     });
+  }
+
+  removeAuthCookie() {
+    cookies.remove(this._authCookieName);
   }
 }
 
