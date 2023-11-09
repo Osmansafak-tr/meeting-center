@@ -5,6 +5,7 @@ import cookieHandler from "../services/cookieHandler";
 interface AuthContextType {
   isAuthenticated: boolean;
   verifyAuth: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,8 +39,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const login = async (email: string, password: string) => {
+    const body = { email: email, password: password };
+    const response = await backendReqHandler.post("/account", body);
+    const { accessToken } = response.data;
+    cookieHandler.setAuthCookie(accessToken);
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, verifyAuth }}>
+    <AuthContext.Provider value={{ isAuthenticated, verifyAuth, login }}>
       {children}
     </AuthContext.Provider>
   );

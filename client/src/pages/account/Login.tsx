@@ -1,15 +1,18 @@
 import "./login.css";
 import FormInput from "../../components/FormInput";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import cookieHandler from "../../services/cookieHandler";
 import { backendReqHandler } from "../../services/reqHandler";
+import { useAuth } from "../../hooks/AuthProvider";
 const reqHandler = backendReqHandler;
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState({ email: "", password: "" });
+
+  const { verifyAuth, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -20,17 +23,20 @@ const Login = () => {
   const passwordOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
-  const buttonOnClick = async () => {
-    console.log(formErrors);
-    const body = { email: email, password: password };
+
+  const handleLogin = async () => {
     try {
-      const response = await reqHandler.post("/account", body);
-      const { accessToken } = response.data;
-      cookieHandler.setAuthCookie(accessToken);
-      navigate(from, { replace: true });
-    } catch (error: any) {
+      await login(email, password);
+      await verifyAuth().then(() => {
+        navigate(from, { replace: true });
+      });
+    } catch (error) {
       handleReqError(error);
     }
+  };
+
+  const buttonOnClick = async () => {
+    await handleLogin();
   };
 
   const handleReqError = (error: any) => {

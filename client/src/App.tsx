@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import PageNotFound from "./pages/error/PageNotFound";
 import Login from "./pages/account/Login";
-import { AuthProvider, useAuth } from "./hooks/AuthProvider";
+import { useAuth } from "./hooks/AuthProvider";
 import Register from "./pages/account/Register";
 import RequireAuth from "./components/RequireAuth";
 
@@ -15,8 +15,6 @@ function App() {
       await verifyAuth();
       setLoading(false);
     };
-
-    console.log("Use effect triggered");
     checkAuthentication();
   }, [verifyAuth]);
 
