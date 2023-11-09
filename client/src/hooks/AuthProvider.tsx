@@ -6,6 +6,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   verifyAuth: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,8 +47,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     cookieHandler.setAuthCookie(accessToken);
   };
 
+  const logout = async () => {
+    if (!isAuthenticated) return;
+
+    const accessToken = cookieHandler.getAuthCookie();
+    const url = "/account/logout";
+    const headers = {
+      "x-api-key": `${import.meta.env.VITE_BACKEND_SHARED_SECRET_KEY}`,
+      Authorization: `Bearer ${accessToken}`,
+    };
+    await backendReqHandler.post(url, {}, headers);
+    cookieHandler.removeAuthCookie();
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, verifyAuth, login }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, verifyAuth, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
