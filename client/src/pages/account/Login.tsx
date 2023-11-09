@@ -1,7 +1,7 @@
 import "./login.css";
 import FormInput from "../../components/FormInput";
 import { useState, ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import cookieHandler from "../../services/cookieHandler";
 import { backendReqHandler } from "../../services/reqHandler";
 const reqHandler = backendReqHandler;
@@ -11,6 +11,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const emailOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -25,7 +27,7 @@ const Login = () => {
       const response = await reqHandler.post("/account", body);
       const { accessToken } = response.data;
       cookieHandler.setAuthCookie(accessToken);
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (error: any) {
       handleReqError(error);
     }

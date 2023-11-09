@@ -4,7 +4,7 @@ import cookieHandler from "../services/cookieHandler";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  verifyAuth: () => void;
+  verifyAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
