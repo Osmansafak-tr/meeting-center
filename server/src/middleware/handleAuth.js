@@ -11,27 +11,31 @@ exports.apiAuth = async (req, res, next) => {
   else return res.status(401).json({ message: "Unauthorized api key." });
 };
 
-exports.userAuthenticate = catchError(async (req, res, next) => {
-  // get access token
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) return next();
-  const split = authHeader.split(" ");
-  const accessToken = split[1];
+exports.userAuthenticate = async (req, res, next) => {
+  try {
+    // get access token
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) return next();
+    const split = authHeader.split(" ");
+    const accessToken = split[1];
 
-  // verify access token
-  const userId = JwtHandler.verifyAccessToken(accessToken);
+    // verify access token
+    const userId = JwtHandler.verifyAccessToken(accessToken);
 
-  // get user
-  const filter = { _id: userId };
-  const errorFunction = (user) => {};
-  const user = await UserMethods.getOne({
-    filter: filter,
-    errorFunction: errorFunction,
-  });
+    // get user
+    const filter = { _id: userId };
+    const errorFunction = (user) => {};
+    const user = await UserMethods.getOne({
+      filter: filter,
+      errorFunction: errorFunction,
+    });
 
-  req.user = user;
-  return next();
-});
+    req.user = user;
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
 
 exports.userAuthorize = async (req, res, next) => {
   if (!req.user) return next(new AppError(CUSTOM_ERROR, 401, "Not Authorized"));

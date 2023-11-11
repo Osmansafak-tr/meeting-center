@@ -1,16 +1,21 @@
 import "./login.css";
 import FormInput from "../../components/FormInput";
-import { useState, ChangeEvent } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import cookieHandler from "../../common/services/cookieHandler";
+import { useState, ChangeEvent, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import cookieHandler from "../../services/cookieHandler";
+import { backendReqHandler } from "../../services/reqHandler";
+import { useAuth } from "../../hooks/AuthProvider";
+const reqHandler = backendReqHandler;
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorPassword, setErrorPassword] = useState("");
+  const [formErrors, setFormErrors] = useState({ email: "", password: "" });
+
+  const { verifyAuth, login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const emailOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -18,30 +23,44 @@ const Login = () => {
   const passwordOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
-  const buttonOnClick = async () => {
-    const backendOrigin = import.meta.env.VITE_BACKEND_ORIGIN;
-    const url = backendOrigin + "/account";
-    const body = { email: email, password: password };
+
+  const handleLogin = async () => {
     try {
-      const response = await axios.post(url, body);
-      const { accessToken } = response.data;
-      cookieHandler.setAuthCookie(accessToken);
-      navigate("/");
-    } catch (error: any) {
+      await login(email, password);
+      await verifyAuth().then(() => {
+        navigate(from, { replace: true });
+      });
+    } catch (error) {
       handleReqError(error);
     }
   };
 
+  const buttonOnClick = async () => {
+    await handleLogin();
+  };
+
   const handleReqError = (error: any) => {
-    const { errorCode, name, message } = error.response.data;
+    console.log(error);
+    const { data } = error.response;
+    const { errorCode, name } = data;
     if (name === "FormError") {
-      if (errorCode == 201) {
-        setErrorEmail(message);
-        setErrorPassword("");
-      } else if (errorCode == 202) {
-        setErrorPassword(message);
-        setErrorEmail("");
-      }
+      const { message } = data;
+      const err = { email: "", password: "" };
+      if (errorCode == 201) err.email = message;
+      else if (errorCode == 202) err.password = message;
+      console.log("Err: ", err);
+      setFormErrors(err);
+    }
+
+    if (name === "ValidationError") {
+      const { errors } = data;
+      const err = { email: "", password: "" };
+      errors.forEach((error: any) => {
+        console.log(error.path);
+        if (error.path === "password") err.password = error.msg;
+        else if (error.path === "email") err.email = error.msg;
+      });
+      setFormErrors(err);
     }
   };
 
@@ -50,7 +69,6 @@ const Login = () => {
       <div className="form-login">
         <h2>Login Form</h2>
         <form>
-          <p className="error-text">{errorEmail}</p>
           {/* Email input */}
           <FormInput
             inputId="email"
@@ -58,16 +76,8 @@ const Login = () => {
             placeholder="Your Email"
             labelText="Email Address"
             onChange={emailOnChange}
+            errorMessage={formErrors.email}
           />
-
-          <div className="row">
-            <p className="error-text col">{errorPassword}</p>
-            <div className="col mb-1 text-right">
-              <a className="custom-link" href="#!">
-                Forgot password?
-              </a>
-            </div>
-          </div>
 
           {/* Password input */}
           <FormInput
@@ -76,7 +86,14 @@ const Login = () => {
             placeholder="Your Password"
             labelText="Password"
             onChange={passwordOnChange}
+            errorMessage={formErrors.password}
           />
+
+          <div className="col mb-2 text-right">
+            <a className="custom-link" href="#!">
+              Forgot password?
+            </a>
+          </div>
 
           {/*Submit button*/}
           <button
@@ -90,7 +107,7 @@ const Login = () => {
           <div className="col text-center">
             <p>
               Not a Member?{" "}
-              <a className="custom-link" href="#!">
+              <a className="custom-link" href="/account/register">
                 Register
               </a>
             </p>
