@@ -6,14 +6,15 @@ require("dotenv").config();
 // My Imports
 const port = process.env.PORT;
 const database = require("./database");
-const { apiAuth } = require("./middlewares/auth");
+const { auth, errorHandler } = require("./middleware");
+const router = require("./router");
 
 app.use(bodyParser.json());
-app.use(apiAuth);
 
-app.get("/", (req, res) => {
-  return res.status(200).json("Main Page");
-});
+app.use("*", auth.apiAuth);
+app.get("/", router);
+
+app.use(errorHandler);
 
 const startApp = async () => {
   await database.connect();
