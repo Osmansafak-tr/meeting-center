@@ -12,7 +12,7 @@ const router = require("./router");
 app.use(bodyParser.json());
 
 app.use("*", auth.apiAuth);
-app.get("/", router);
+app.use("/", router);
 
 app.use(errorHandler);
 
