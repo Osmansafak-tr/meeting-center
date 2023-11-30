@@ -20,4 +20,5 @@ exports.ConnectToken = async (userId, channelName, roleParam) => {
   );
 
   await AgoraTokenMethods.create(agoraToken);
+  return { token: agoraToken };
 };

@@ -6,6 +6,7 @@ import Login from "./pages/account/Login";
 import { useAuth } from "./hooks/AuthProvider";
 import Register from "./pages/account/Register";
 import RequireAuth from "./components/RequireAuth";
+import MeetingApp from "./pages/meeting/MeetingApp";
 
 function App() {
   const { verifyAuth } = useAuth();
@@ -28,6 +29,8 @@ function App() {
           <Route index element={<Login />}></Route>
           <Route path="register" element={<Register />}></Route>
         </Route>
+
+        <Route path="/meeting" element={<MeetingApp />}></Route>
 
         <Route element={<RequireAuth />}>
           <Route path="/test" element="Auth test"></Route>

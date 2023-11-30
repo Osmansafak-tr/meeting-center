@@ -29,7 +29,14 @@ class RequestHandler {
     return response;
   }
 }
+
 const backendReqHandler = new RequestHandler(import.meta.env.VITE_BACKEND_URL, {
   "x-api-key": `${import.meta.env.VITE_BACKEND_SHARED_SECRET_KEY}`,
 });
-export { backendReqHandler };
+const agoraApiReqHandler = new RequestHandler(
+  import.meta.env.VITE_AGORA_API_URL,
+  {
+    "x-api-key": `${import.meta.env.VITE_AGORA_API_SHARED_SECRET_KEY}`,
+  }
+);
+export { backendReqHandler, agoraApiReqHandler };

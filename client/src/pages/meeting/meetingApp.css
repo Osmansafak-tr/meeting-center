@@ -1,0 +1,20 @@
+#video-streams{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    height: 90vh;
+    width: 1400px;
+}
+
+.video-container{
+    height: 100%;
+    border: 2px solid black;
+}
+
+.video-player{
+    width: 100%;
+    height: 100%;
+}
+
+#stream-controls{
+    display: none;
+}
