@@ -1,8 +1,8 @@
 const { AgoraTokenMethods } = require("../model");
 const { RtcRole, RtcTokenBuilder } = require("agora-token");
 
-exports.ConnectToken = async (userId, channelName, roleParam) => {
-  const role = roleParam || RtcRole.SUBSCRIBER;
+exports.ConnectToken = async (uid, channelName, role) => {
+  role = role || RtcRole.SUBSCRIBER;
   const appID = process.env.AGORA_APP_ID;
   const appCertificate = process.env.AGORA_APP_CERTIFICATE;
 
@@ -14,7 +14,7 @@ exports.ConnectToken = async (userId, channelName, roleParam) => {
     appID,
     appCertificate,
     channelName,
-    userId,
+    uid,
     role,
     privilegeExpiredTs
   );
