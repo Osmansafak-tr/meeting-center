@@ -11,7 +11,6 @@ import { agoraApiReqHandler } from "../../services/reqHandler";
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
 const CHANNEL = "test";
 const TOKEN = import.meta.env.VITE_AGORA_TOKEN;
-const uid = "123567890123456789012345";
 
 const MeetingApp: React.FC = () => {
   const [localTracks, setLocalTracks] = useState<
@@ -24,7 +23,9 @@ const MeetingApp: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
 
-  const [localUid, setLocalUid] = useState<UID>("");
+  const [isReady, setIsReady] = useState(false);
+  const [uid, setUid] = useState<number>();
+  const [localUid, setLocalUid] = useState<UID>();
   const [remoteUser, setRemoteUser] = useState<any>(null);
 
   const [client, setClient] = useState<IAgoraRTCClient>(
@@ -34,28 +35,31 @@ const MeetingApp: React.FC = () => {
     })
   );
 
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     const url = "/connect/token";
-  //     const body = {
-  //       userId: "123567890123456789012345",
-  //       channelName: "test",
-  //     };
-  //     const response = await agoraApiReqHandler.post(url, body);
-  //     const { token } = response.data;
-  //     setToken(token);
-  //   };
-  //   getToken();
+  useEffect(() => {
+    setIsReady(!isReady);
+  }, []);
 
-  //   return () => {};
-  // }, []);
+  useEffect(() => {
+    const getToken = async () => {
+      const url = "/connect/token";
+      const body = {
+        userId: "123567890123456789012345",
+        channelName: "test",
+      };
+      const response = await agoraApiReqHandler.post(url, body);
+      const { token, uid } = response.data;
+      setUid(uid);
+      setToken(token);
+    };
+    if (isReady) getToken();
+  }, [isReady]);
 
   useEffect(() => {
     const joinAndDisplayLocalScreen = async () => {
       client.on("user-published", handleRemoteUserJoin);
       client.on("user-left", handleUserLeft);
 
-      const UID = await client.join(APP_ID, CHANNEL, TOKEN, null);
+      const UID = await client.join(APP_ID, CHANNEL, token, uid);
 
       const player = (
         <div className="video-container" id={`user-container-${UID}`} key={UID}>
@@ -69,13 +73,13 @@ const MeetingApp: React.FC = () => {
       setLocalUid(UID);
       setLoading(false);
     };
-    if (client.connectionState == "DISCONNECTED" && loading)
+    if (client.connectionState == "DISCONNECTED" && loading && token != "")
       joinAndDisplayLocalScreen();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const track = async () => {
-      if (localUid != "") {
+      if (localUid) {
         console.log("LocalUid : ", localUid);
         const tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
         setLocalTracks(tracks);
@@ -103,11 +107,11 @@ const MeetingApp: React.FC = () => {
     await client.subscribe(user, mediaType);
 
     if (mediaType === "video") {
-      setVideoStreams((prevStreams) =>
-        prevStreams.filter(
-          (stream) => stream.key !== `user-container-${user.uid}`
-        )
-      );
+      // setVideoStreams((prevStreams) =>
+      //   prevStreams.filter(
+      //     (stream) => stream.key !== `user-container-${user.uid}`
+      //   )
+      // );
 
       const player = (
         <div
