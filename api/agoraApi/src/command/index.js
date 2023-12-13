@@ -19,6 +19,6 @@ exports.ConnectToken = async (uid, channelName, role) => {
     privilegeExpiredTs
   );
 
-  await AgoraTokenMethods.create(agoraToken);
+  // await AgoraTokenMethods.create(agoraToken);
   return { token: agoraToken };
 };

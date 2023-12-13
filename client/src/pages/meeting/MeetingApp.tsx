@@ -10,13 +10,12 @@ import { agoraApiReqHandler } from "../../services/reqHandler";
 
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
 const CHANNEL = "test";
-const TOKEN = import.meta.env.VITE_AGORA_TOKEN;
 
 const MeetingApp: React.FC = () => {
   const [localTracks, setLocalTracks] = useState<
     [IMicrophoneAudioTrack | null, ICameraVideoTrack | null]
   >([null, null]);
-  const [remoteUsers, setRemoteUsers] = useState<{ [key: number]: any }>({});
+  const [remoteUsers, setRemoteUsers] = useState<number[]>([]);
   const [micStatus, setMicStatus] = useState<boolean>(true);
   const [camStatus, setCamStatus] = useState<boolean>(true);
   const [videoStreams, setVideoStreams] = useState<JSX.Element[]>([]);
@@ -51,13 +50,20 @@ const MeetingApp: React.FC = () => {
       setUid(uid);
       setToken(token);
     };
-    if (isReady) getToken();
-  }, [isReady]);
-
-  useEffect(() => {
     const joinAndDisplayLocalScreen = async () => {
       client.on("user-published", handleRemoteUserJoin);
       client.on("user-left", handleUserLeft);
+      client.on("user-info-updated", (uid, msg) => {
+        const unmuteVideo = () => {
+          const user = client.remoteUsers.find((user) => {
+            return user.uid === uid;
+          });
+          user?.videoTrack?.play(`user-${uid}`);
+        };
+        if (msg === "unmute-video") {
+          unmuteVideo();
+        }
+      });
 
       const UID = await client.join(APP_ID, CHANNEL, token, uid);
 
@@ -73,28 +79,25 @@ const MeetingApp: React.FC = () => {
       setLocalUid(UID);
       setLoading(false);
     };
-    if (client.connectionState == "DISCONNECTED" && loading && token != "")
-      joinAndDisplayLocalScreen();
-  }, [token]);
-
-  useEffect(() => {
     const track = async () => {
       if (localUid) {
-        console.log("LocalUid : ", localUid);
         const tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
-        setLocalTracks(tracks);
 
         tracks[1].play(`user-${localUid}`);
+        setLocalTracks(tracks);
         await client.publish([tracks[0], tracks[1]]);
+        setClient(client);
       }
     };
-    track();
-  }, [localUid]);
+    if (isReady && !token) getToken();
+    if (client.connectionState == "DISCONNECTED" && loading && token != "")
+      joinAndDisplayLocalScreen();
+    if (localUid && token) track();
+  }, [isReady, token, localUid]);
 
   useEffect(() => {
     if (remoteUser) {
       remoteUser.videoTrack.play(`user-${remoteUser.uid}`);
-      setClient(client);
     }
   }, [remoteUser]);
 
@@ -102,17 +105,19 @@ const MeetingApp: React.FC = () => {
     user: any,
     mediaType: "video" | "audio"
   ) => {
-    console.log("User Id : ", user.uid);
+    console.log("Remote user join : ", user.uid);
+
     setRemoteUsers((prevUsers) => ({ ...prevUsers, [user.uid]: user }));
+    for (const i in remoteUsers) {
+      console.log("Remote users : ", remoteUsers[i]);
+      if (remoteUsers[i] == user.uid) {
+        console.log("same remote user : ", user.uid);
+        return;
+      }
+    }
     await client.subscribe(user, mediaType);
 
     if (mediaType === "video") {
-      // setVideoStreams((prevStreams) =>
-      //   prevStreams.filter(
-      //     (stream) => stream.key !== `user-container-${user.uid}`
-      //   )
-      // );
-
       const player = (
         <div
           className="video-container"
@@ -122,20 +127,20 @@ const MeetingApp: React.FC = () => {
           <div className="video-player" id={`user-${user.uid}`}></div>
         </div>
       );
-
       setVideoStreams((prevStreams) => [...prevStreams, player]);
       setRemoteUser(user);
     }
 
     if (mediaType === "audio") user.audioTrack.play();
+
+    const temp = remoteUsers;
+    temp.push(user.uid);
+    setRemoteUsers(temp);
   };
 
   const handleUserLeft = async (user: any) => {
-    setRemoteUsers((prevUsers) => {
-      const newUsers = { ...prevUsers };
-      delete newUsers[user.uid];
-      return newUsers;
-    });
+    const temp = remoteUsers.filter((value) => value != user.uid);
+    setRemoteUsers(temp);
 
     setVideoStreams((prevStreams) =>
       prevStreams.filter((stream) => stream.key !== `${user.uid}`)
@@ -156,14 +161,12 @@ const MeetingApp: React.FC = () => {
     if (localTracks[0]) {
       await localTracks[0].setMuted(micStatus);
       setMicStatus((prevStatus) => !prevStatus);
-      setClient(client);
     }
   };
   const toggleCam = async () => {
     if (localTracks[1]) {
       await localTracks[1].setMuted(camStatus);
       setCamStatus((prevStatus) => !prevStatus);
-      setClient(client);
     }
   };
 
