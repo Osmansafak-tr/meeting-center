@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import AgoraRTC, {
   IMicrophoneAudioTrack,
   ICameraVideoTrack,
@@ -9,9 +9,14 @@ import "./meetingApp.css";
 import { agoraApiReqHandler } from "../../services/reqHandler";
 
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
-const CHANNEL = "test";
 
 const MeetingApp: React.FC = () => {
+  const queryParams = new URLSearchParams(window.location.search);
+  const meetingId = queryParams.get("mid");
+  // const password = queryParams.get("pwd");
+
+  if (!meetingId) return <div>Mid is not defined</div>;
+
   const [localTracks, setLocalTracks] = useState<
     [IMicrophoneAudioTrack | null, ICameraVideoTrack | null]
   >([null, null]);
@@ -43,7 +48,7 @@ const MeetingApp: React.FC = () => {
       const url = "/connect/token";
       const body = {
         userId: "123567890123456789012345",
-        channelName: "test",
+        channelName: meetingId,
       };
       const response = await agoraApiReqHandler.post(url, body);
       const { token, uid } = response.data;
@@ -65,7 +70,7 @@ const MeetingApp: React.FC = () => {
         }
       });
 
-      const UID = await client.join(APP_ID, CHANNEL, token, uid);
+      const UID = await client.join(APP_ID, meetingId, token, uid);
 
       const player = (
         <div className="video-container" id={`user-container-${UID}`} key={UID}>
