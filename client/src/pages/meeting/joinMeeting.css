@@ -1,0 +1,26 @@
+.custom-link {
+    text-decoration: none;
+    color: #3F52E3;
+}
+.text-right {
+    text-align: right;
+}
+
+.form-login {
+    width: 20rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-login {
+    width: 100%;
+}
+
+.error-text {
+    color: red;
+    margin-bottom: 0.5rex;
+    margin-left: 2rex;
+    font-size: 15px;
+}
