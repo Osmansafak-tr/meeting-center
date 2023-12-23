@@ -8,6 +8,7 @@ const Home = () => {
     <div>
       <h2>This Is Home Page</h2>
       {isAuthenticated ? <LogoutButton /> : null}
+      <a href="meeting/join">Join</a>
     </div>
   );
 };

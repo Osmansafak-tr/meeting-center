@@ -1,16 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import FormInput from "../../components/FormInput";
 import "./joinMeeting.css";
-import { useNavigate } from "react-router-dom";
 
 const JoinMeeting = () => {
   const [meetingId, setMeetingId] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    window.location.reload();
-  }, []);
 
   const onMeetingIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMeetingId(event.target.value);
@@ -21,7 +15,8 @@ const JoinMeeting = () => {
 
   const onButtonClick = () => {
     console.log("clicked");
-    navigate(`/meeting?mid=${meetingId}&pwd=${password}`);
+    window.open(`/meeting?mid=${meetingId}&pwd=${password}`);
+    window.location.reload();
   };
 
   return (

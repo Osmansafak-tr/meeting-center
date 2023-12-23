@@ -32,7 +32,7 @@ function App() {
         </Route>
 
         <Route path="/meeting" element={<MeetingApp />}></Route>
-        <Route path="/join" element={<JoinMeeting />}></Route>
+        <Route path="/meeting/join" element={<JoinMeeting />}></Route>
 
         <Route element={<RequireAuth />}>
           <Route path="/test" element="Auth test"></Route>

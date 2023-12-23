@@ -1,4 +1,4 @@
-const { AccountCommands } = require("../commands");
+const { AccountCommands } = require("../../command");
 const { JwtHandler } = require("../../service");
 
 exports.VerifyAuth = async (req, res) => {

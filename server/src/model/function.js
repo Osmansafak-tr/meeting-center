@@ -1,4 +1,6 @@
-exports.checkValidValue = (currentVal, otherVal) => {
-  if (otherVal == undefined || otherVal == null) return currentVal;
-  else return otherVal;
+exports.updateObject = (obj, model) => {
+  const keys = Object.keys(model);
+  keys.forEach((key) => {
+    if (obj[key] != undefined) obj[key] = model[key];
+  });
 };
