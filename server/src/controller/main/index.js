@@ -35,3 +35,16 @@ exports.DeleteMyMeeting = async (req, res) => {
   await command.DeleteMyMeeting(id, userId);
   return res.status(200).json("Meeting deleted");
 };
+
+exports.JoinMeeting = async (req, res) => {
+  const { name, meetingId } = req.body;
+  const userId = req.user != null ? req.user._id : null;
+  const result = await command.JoinMeeting(meetingId, name, userId);
+  return res.status(200).json(result);
+};
+
+exports.LeaveMeeting = async (req, res) => {
+  const { meetingId, agoraId } = req.body;
+  await command.LeaveMeeting(meetingId, agoraId);
+  return res.status(200).json("Leaved meeting");
+};

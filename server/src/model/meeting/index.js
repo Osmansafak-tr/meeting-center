@@ -25,17 +25,13 @@ const meetingSchema = mongoose.Schema({
 
   participants: [
     {
-      isAuthenticated: {
-        type: Boolean,
+      name: {
+        type: String,
         required: true,
       },
       agoraId: {
         type: Number,
         required: true,
-      },
-      userId: {
-        type: mongoose.Types.ObjectId,
-        required: false,
       },
     },
   ],
@@ -43,13 +39,17 @@ const meetingSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   startTime: {
     type: Date,
-    required: false,
+    default: new Date(0),
   },
   endTime: {
     type: Date,
-    required: false,
+    default: new Date(0),
   },
   createdAt: {
     type: Date,

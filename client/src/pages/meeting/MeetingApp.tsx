@@ -47,7 +47,6 @@ const MeetingApp: React.FC = () => {
     const getToken = async () => {
       const url = "/connect/token";
       const body = {
-        userId: "123567890123456789012345",
         channelName: meetingId,
       };
       const response = await agoraApiReqHandler.post(url, body);

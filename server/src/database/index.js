@@ -21,7 +21,7 @@ exports.seedData = async () => {
 
   const hashedPassword = PasswordEncrypt.hash("12345");
   const user1Email = "user1@gmail.com";
-  User.insertMany([
+  await User.insertMany([
     {
       email: user1Email,
       password: hashedPassword,
@@ -38,7 +38,7 @@ exports.seedData = async () => {
     selection: "_id",
   });
 
-  Meeting.insertMany([
+  await Meeting.insertMany([
     {
       meetingId: "111111111",
       password: hashedPassword,

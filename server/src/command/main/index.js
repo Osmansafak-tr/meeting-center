@@ -1,5 +1,6 @@
 const { MeetingMethods } = require("../../model");
 const { PasswordEncrypt } = require("../../service");
+const { agoraApiReqHandler } = require("../../service/requestHandler");
 
 exports.GetMyMeetings = async (userId) => {
   const filter = {
@@ -50,4 +51,27 @@ exports.UpdateMyMeeting = async (filter, password, topic, plannedStartTime) => {
 exports.DeleteMyMeeting = async (id, userId) => {
   const filter = { _id: id, userId: userId };
   await MeetingMethods.delete(filter);
+};
+
+exports.JoinMeeting = async (meetingId, name, userId) => {
+  const url = "/connect/token";
+  const body = {
+    channelName: meetingId,
+  };
+  const response = await agoraApiReqHandler.post(url, body);
+  const { token, uid } = response.data;
+
+  const participant = {
+    name: name,
+    agoraId: uid,
+    userId: userId,
+  };
+  const filter = { meetingId: meetingId, isActive: true };
+  await MeetingMethods.join(filter, participant);
+  return { token: token, uid: uid };
+};
+
+exports.LeaveMeeting = async (meetingId, agoraId) => {
+  const filter = { meetingId: meetingId, isActive: true };
+  await MeetingMethods.leave(filter, agoraId);
 };
