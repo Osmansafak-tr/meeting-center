@@ -1,3 +1,7 @@
+const { AppError } = require("../../common/class");
+const { ErrorConstants } = require("../../common/constant");
+const { PasswordEncrypt } = require("../../service");
+
 const command = require("../../command").MainCommands;
 
 exports.GetMyMeetings = async (req, res) => {
@@ -34,6 +38,21 @@ exports.DeleteMyMeeting = async (req, res) => {
   const { id } = req.params;
   await command.DeleteMyMeeting(id, userId);
   return res.status(200).json("Meeting deleted");
+};
+
+exports.TryJoinMeeting = async (req, res) => {
+  const { meetingId, password } = req.body;
+  const meeting = await command.TryJoinMeeting(meetingId, password);
+  return res.status(200).json(meeting);
+};
+
+exports.GetMeetingByMeetingIdAndPassword = async (req, res) => {
+  const { meetingId, password } = req.body;
+  const meeting = await command.GetMeetingByMeetingIdAndPassword(
+    meetingId,
+    password
+  );
+  return res.status(200).json(meeting);
 };
 
 exports.JoinMeeting = async (req, res) => {

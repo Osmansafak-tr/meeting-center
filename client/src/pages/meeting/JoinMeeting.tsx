@@ -1,10 +1,12 @@
 import React, { ChangeEvent, useState } from "react";
 import FormInput from "../../components/FormInput";
 import "./joinMeeting.css";
+import { backendReqHandler } from "../../services/reqHandler";
 
 const JoinMeeting = () => {
   const [meetingId, setMeetingId] = useState("");
   const [password, setPassword] = useState("");
+  const [formErrors, setFormErrors] = useState({ meetingId: "", password: "" });
 
   const onMeetingIdChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMeetingId(event.target.value);
@@ -13,42 +15,67 @@ const JoinMeeting = () => {
     setPassword(event.target.value);
   };
 
-  const onButtonClick = () => {
-    console.log("clicked");
-    window.open(`/meeting?mid=${meetingId}&pwd=${password}`);
-    window.location.reload();
+  const getMeeting = async () => {
+    const url = `/meeting/tryJoin`;
+    const body = {
+      meetingId: meetingId,
+      password: password,
+    };
+    const response = await backendReqHandler.post(url, body);
+    console.log(response.data);
+    return response.data;
+  };
+
+  const onButtonClick = async () => {
+    try {
+      const meeting = await getMeeting();
+      console.log(meeting);
+      window.open(`/meeting?mid=${meetingId}&pwd=${meeting.password}`);
+      window.location.reload();
+    } catch (error: any) {
+      console.log(error.response.data.message);
+      handleReqError(error);
+    }
+  };
+
+  const handleReqError = (error: any) => {
+    console.log(error);
+    const { data } = error.response;
+    const { errorCode, name } = data;
+    if (name === "FormError") {
+      const { message } = data;
+      const err = { meetingId: "", password: "" };
+      if (errorCode == 204) err.meetingId = message;
+      else if (errorCode == 202) err.password = message;
+      console.log("Err: ", err);
+      setFormErrors(err);
+    }
   };
 
   return (
     <>
       <div className="form-login">
-        <h2>Login Form</h2>
+        <h2>Join Meeting</h2>
         <form>
           {/* Meeting Id input */}
           <FormInput
-            inputId="email"
-            inputType="email"
-            placeholder="Your Email"
-            labelText="Email Address"
+            inputId="meetingId"
+            inputType="text"
+            placeholder="Meeting Id"
+            labelText="Meeting Id"
             onChange={onMeetingIdChange}
-            errorMessage=""
+            errorMessage={formErrors.meetingId}
           />
 
           {/* Password input */}
           <FormInput
             inputId="password"
             inputType="password"
-            placeholder="Your Password"
+            placeholder="Meeting Password"
             labelText="Password"
             onChange={onPasswordChange}
-            errorMessage=""
+            errorMessage={formErrors.password}
           />
-
-          <div className="col mb-2 text-right">
-            <a className="custom-link" href="#!">
-              Forgot password?
-            </a>
-          </div>
 
           {/*Submit button*/}
           <button

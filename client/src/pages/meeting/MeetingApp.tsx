@@ -6,17 +6,20 @@ import AgoraRTC, {
   UID,
 } from "agora-rtc-sdk-ng"; // Import AgoraRTC library if not already done
 import "./meetingApp.css";
-import { agoraApiReqHandler } from "../../services/reqHandler";
+import { backendReqHandler } from "../../services/reqHandler";
+import { Meeting } from "../../models/meeting";
 
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
 
 const MeetingApp: React.FC = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const meetingId = queryParams.get("mid");
-  // const password = queryParams.get("pwd");
+  const password = queryParams.get("pwd");
 
   if (!meetingId) return <div>Mid is not defined</div>;
 
+  const [meeting, setMeeting] = useState<Meeting>();
+  const [waitForMeetingStart, setWaitForMeetingStart] = useState(false);
   const [localTracks, setLocalTracks] = useState<
     [IMicrophoneAudioTrack | null, ICameraVideoTrack | null]
   >([null, null]);
@@ -39,24 +42,51 @@ const MeetingApp: React.FC = () => {
     })
   );
 
+  const getMeeting = async () => {
+    const url = `/meeting/get`;
+    const body = {
+      meetingId: meetingId,
+      password: password,
+    };
+    const response = await backendReqHandler.post(url, body);
+    const meeting: Meeting = response.data;
+    console.log("Meeting", meeting);
+    return meeting;
+  };
+
   useEffect(() => {
     setIsReady(!isReady);
   }, []);
 
   useEffect(() => {
     const getToken = async () => {
-      const url = "/connect/token";
-      const body = {
-        channelName: meetingId,
-      };
-      const response = await agoraApiReqHandler.post(url, body);
-      const { token, uid } = response.data;
-      setUid(uid);
-      setToken(token);
+      try {
+        const url = "/meeting/join";
+        const body = {
+          meetingId: meetingId,
+          name: "name",
+        };
+        const response = await backendReqHandler.post(url, body);
+        const { token, uid } = response.data;
+        const meeting = await getMeeting();
+        if (!meeting.isStarted) {
+          setLoading(false);
+          return;
+        }
+        setMeeting(meeting);
+        setUid(uid);
+        setToken(token);
+      } catch (error: any) {
+        if (error.response.data.errorCode == 501) {
+          setLoading(false);
+          setWaitForMeetingStart(true);
+        }
+      }
     };
     const joinAndDisplayLocalScreen = async () => {
       client.on("user-published", handleRemoteUserJoin);
       client.on("user-left", handleUserLeft);
+      client.on("user-unpublished", handleUserLeft);
       client.on("user-info-updated", (uid, msg) => {
         const unmuteVideo = () => {
           const user = client.remoteUsers.find((user) => {
@@ -67,6 +97,12 @@ const MeetingApp: React.FC = () => {
         if (msg === "unmute-video") {
           unmuteVideo();
         }
+      });
+      window.addEventListener("beforeunload", (ev) => {
+        const func = async () => {
+          await leaveAndRemoveLocalStream();
+        };
+        func();
       });
 
       const UID = await client.join(APP_ID, meetingId, token, uid);
@@ -139,11 +175,14 @@ const MeetingApp: React.FC = () => {
 
     const temp = remoteUsers;
     temp.push(user.uid);
+    setMeeting(await getMeeting());
     setRemoteUsers(temp);
   };
 
   const handleUserLeft = async (user: any) => {
     const temp = remoteUsers.filter((value) => value != user.uid);
+    const meeting = await getMeeting();
+    setMeeting(meeting);
     setRemoteUsers(temp);
 
     setVideoStreams((prevStreams) =>
@@ -158,6 +197,12 @@ const MeetingApp: React.FC = () => {
         await localTracks[i]?.close();
       }
     }
+    const url = "/meeting/leave";
+    const body = {
+      meetingId: meetingId,
+      agoraId: uid,
+    };
+    await backendReqHandler.post(url, body);
     await client.leave();
   };
 
@@ -176,6 +221,8 @@ const MeetingApp: React.FC = () => {
 
   if (loading) return <div>Loading</div>;
 
+  if (waitForMeetingStart) return <div>Meeting is not Started</div>;
+
   return (
     <>
       <div>
@@ -189,6 +236,7 @@ const MeetingApp: React.FC = () => {
             {camStatus ? "Cam On" : "Cam Off"}
           </button>
           <button onClick={leaveAndRemoveLocalStream}>Leave</button>
+          <button>Participants {meeting?.participants.length}</button>
         </div>
       </div>
     </>

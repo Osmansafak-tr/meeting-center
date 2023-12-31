@@ -1,4 +1,5 @@
 import axios from "axios";
+import cookieHandler from "./cookieHandler";
 
 class RequestHandler {
   private baseUrl;
@@ -32,6 +33,9 @@ class RequestHandler {
 
 const backendReqHandler = new RequestHandler(import.meta.env.VITE_BACKEND_URL, {
   "x-api-key": `${import.meta.env.VITE_BACKEND_SHARED_SECRET_KEY}`,
+  Authorization: cookieHandler.getAuthCookie()
+    ? `Bearer ${cookieHandler.getAuthCookie()}`
+    : undefined,
 });
 const agoraApiReqHandler = new RequestHandler(
   import.meta.env.VITE_AGORA_API_URL,

@@ -15,6 +15,8 @@ routerHandler.put("/meetings/:id", controller.UpdateMyMeeting, userAuthorize);
 
 routerHandler.del("/meetings/:id", controller.DeleteMyMeeting, userAuthorize);
 
+routerHandler.post("/meeting/get", controller.GetMeetingByMeetingIdAndPassword);
+routerHandler.post("/meeting/tryJoin", controller.TryJoinMeeting);
 routerHandler.post("/meeting/join", controller.JoinMeeting);
 routerHandler.post("/meeting/leave", controller.LeaveMeeting);
 
