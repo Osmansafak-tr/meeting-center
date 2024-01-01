@@ -1,11 +1,8 @@
 import "./login.css";
 import FormInput from "../../components/FormInput";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import cookieHandler from "../../services/cookieHandler";
-import { backendReqHandler } from "../../services/reqHandler";
 import { useAuth } from "../../hooks/AuthProvider";
-const reqHandler = backendReqHandler;
 
 const Login = () => {
   const [email, setEmail] = useState("");

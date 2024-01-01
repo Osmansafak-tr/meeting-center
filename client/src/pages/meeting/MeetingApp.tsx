@@ -1,22 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import AgoraRTC, {
   IMicrophoneAudioTrack,
   ICameraVideoTrack,
   IAgoraRTCClient,
   UID,
-} from "agora-rtc-sdk-ng"; // Import AgoraRTC library if not already done
+} from "agora-rtc-sdk-ng";
+import AgoraRTM, { RTMClient } from "agora-rtm-sdk";
 import "./meetingApp.css";
 import { backendReqHandler } from "../../services/reqHandler";
 import { Meeting } from "../../models/meeting";
+import { useNavigate } from "react-router-dom";
+import FormInput from "../../components/FormInput";
 
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
+const CHAT_APP_ID = import.meta.env.VITE_AGORA_CHAT_APP_ID;
 
 const MeetingApp: React.FC = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const meetingId = queryParams.get("mid");
   const password = queryParams.get("pwd");
+  const navigate = useNavigate();
 
-  if (!meetingId) return <div>Mid is not defined</div>;
+  if (!meetingId || !password) {
+    navigate("/");
+    return;
+  }
 
   const [meeting, setMeeting] = useState<Meeting>();
   const [waitForMeetingStart, setWaitForMeetingStart] = useState(false);
@@ -34,6 +42,7 @@ const MeetingApp: React.FC = () => {
   const [uid, setUid] = useState<number>();
   const [localUid, setLocalUid] = useState<UID>();
   const [remoteUser, setRemoteUser] = useState<any>(null);
+  const [screenName, setScreenName] = useState("");
 
   const [client, setClient] = useState<IAgoraRTCClient>(
     AgoraRTC.createClient({
@@ -55,16 +64,12 @@ const MeetingApp: React.FC = () => {
   };
 
   useEffect(() => {
-    setIsReady(!isReady);
-  }, []);
-
-  useEffect(() => {
     const getToken = async () => {
       try {
         const url = "/meeting/join";
         const body = {
           meetingId: meetingId,
-          name: "name",
+          name: screenName,
         };
         const response = await backendReqHandler.post(url, body);
         const { token, uid } = response.data;
@@ -84,42 +89,49 @@ const MeetingApp: React.FC = () => {
       }
     };
     const joinAndDisplayLocalScreen = async () => {
-      client.on("user-published", handleRemoteUserJoin);
-      client.on("user-left", handleUserLeft);
-      client.on("user-unpublished", handleUserLeft);
-      client.on("user-info-updated", (uid, msg) => {
-        const unmuteVideo = () => {
-          const user = client.remoteUsers.find((user) => {
-            return user.uid === uid;
-          });
-          user?.videoTrack?.play(`user-${uid}`);
-        };
-        if (msg === "unmute-video") {
-          unmuteVideo();
-        }
-      });
-      window.addEventListener("beforeunload", (ev) => {
-        const func = async () => {
-          await leaveAndRemoveLocalStream();
-        };
-        func();
-      });
+      if (uid) {
+        client.on("user-published", handleRemoteUserJoin);
+        client.on("user-left", handleUserLeft);
+        client.on("user-unpublished", handleUserLeft);
+        client.on("user-info-updated", (uid, msg) => {
+          const unmuteVideo = () => {
+            const user = client.remoteUsers.find((user) => {
+              return user.uid === uid;
+            });
+            user?.videoTrack?.play(`user-${uid}`);
+          };
+          if (msg === "unmute-video") {
+            unmuteVideo();
+          }
+        });
+        window.addEventListener("beforeunload", (ev) => {
+          const func = async () => {
+            await leaveAndRemoveLocalStream();
+          };
+          func();
+        });
 
-      const UID = await client.join(APP_ID, meetingId, token, uid);
+        const UID = await client.join(APP_ID, meetingId, token, uid);
 
-      const player = (
-        <div className="video-container" id={`user-container-${UID}`} key={UID}>
-          <div className="video-player" id={`user-${UID}`}></div>
-        </div>
-      );
+        const player = (
+          <div
+            className="video-container"
+            id={`user-container-${UID}`}
+            key={UID}
+          >
+            <div className="video-player" id={`user-${UID}`}></div>
+          </div>
+        );
 
-      setVideoStreams((prevStreams) => [...prevStreams, player]);
+        setVideoStreams((prevStreams) => [...prevStreams, player]);
 
-      setClient(client);
-      setLocalUid(UID);
-      setLoading(false);
+        setClient(client);
+        setLocalUid(UID);
+        setLoading(false);
+      }
     };
     const track = async () => {
+      console.log("Meeting Name", screenName);
       if (localUid) {
         const tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
 
@@ -219,6 +231,37 @@ const MeetingApp: React.FC = () => {
     }
   };
 
+  const onSubmitButtonClick = async () => {
+    // await clientRtm?.publish(CHAT_APP_ID, message);
+  };
+
+  if (!isReady) {
+    const meetingNameOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+      setScreenName(event.target.value);
+    };
+    const btnOnClick = () => {
+      setIsReady(true);
+    };
+    return (
+      <>
+        <div className="prepare-form">
+          <h2 className="mb3">Prepare Meeting</h2>
+          <FormInput
+            inputId="meetingName"
+            inputType="text"
+            labelText="Meeting Name"
+            onChange={meetingNameOnChange}
+            placeholder="Your Meeting Name"
+            errorMessage=""
+          />
+          <button className="btn btn-primary" onClick={btnOnClick}>
+            Enter Meeting
+          </button>
+        </div>
+      </>
+    );
+  }
+
   if (loading) return <div>Loading</div>;
 
   if (waitForMeetingStart) return <div>Meeting is not Started</div>;
@@ -228,15 +271,28 @@ const MeetingApp: React.FC = () => {
       <div>
         <button onClick={() => setVideoStreams([])}>Clear Streams</button>
         <div id="video-streams">{videoStreams}</div>
-        <div>
-          <button onClick={toggleMic}>
-            {micStatus ? "Mic On" : "Mic Off"}
-          </button>
-          <button onClick={toggleCam}>
-            {camStatus ? "Cam On" : "Cam Off"}
-          </button>
-          <button onClick={leaveAndRemoveLocalStream}>Leave</button>
-          <button>Participants {meeting?.participants.length}</button>
+        <div className="row">
+          <div className="col-8">
+            <button onClick={toggleMic}>
+              {micStatus ? "Mic On" : "Mic Off"}
+            </button>
+            <button onClick={toggleCam}>
+              {camStatus ? "Cam On" : "Cam Off"}
+            </button>
+            <button onClick={leaveAndRemoveLocalStream}>Leave</button>
+            <button>Participants {meeting?.participants.length}</button>
+          </div>
+          <div className="col">
+            <input
+              type="text"
+              // onChange={(event) => {
+              //   setMessage(event.target.value);
+              // }}
+            />
+            <button className="btn btn-primary" onClick={onSubmitButtonClick}>
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </>

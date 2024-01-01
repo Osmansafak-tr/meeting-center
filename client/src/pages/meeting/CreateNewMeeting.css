@@ -1,0 +1,11 @@
+.form-new-meeting {
+    width: 20rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-create{
+    width: 100%;
+}
