@@ -1,14 +1,11 @@
-import LogoutButton from "../components/LogoutButton";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../hooks/AuthProvider";
 
 const Home = () => {
-  const { isAuthenticated } = useAuth();
-
   return (
     <div>
+      <Navbar />
       <h2>This Is Home Page</h2>
-      {isAuthenticated ? <LogoutButton /> : null}
-      <a href="meeting/join">Join</a>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { ChangeEvent, useState } from "react";
 import FormInput from "../../components/FormInput";
 import "./joinMeeting.css";
 import { backendReqHandler } from "../../services/reqHandler";
+import Navbar from "../../components/Navbar";
 
 const JoinMeeting = () => {
   const [meetingId, setMeetingId] = useState("");
@@ -54,6 +55,7 @@ const JoinMeeting = () => {
 
   return (
     <>
+      <Navbar />
       <div className="form-login">
         <h2>Join Meeting</h2>
         <form>

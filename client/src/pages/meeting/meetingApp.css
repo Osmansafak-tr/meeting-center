@@ -1,13 +1,26 @@
+body {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
 #video-streams{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     height: 90vh;
-    width: 1400px;
+    width: 100%;
+}
+
+.message-container{
+    border: 1px solid black;
+    width: 100%;
+    height: 600px;
+    margin-bottom: 20px;
 }
 
 .video-container{
     height: 100%;
     border: 2px solid black;
+    background-color: black;
 }
 
 .video-player{
