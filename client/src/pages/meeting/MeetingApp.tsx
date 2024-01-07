@@ -5,12 +5,12 @@ import AgoraRTC, {
   IAgoraRTCClient,
   UID,
 } from "agora-rtc-sdk-ng";
-import AgoraRTM, { RTMClient } from "agora-rtm-sdk";
 import "./meetingApp.css";
 import { backendReqHandler } from "../../services/reqHandler";
 import { Meeting } from "../../models/meeting";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../../components/FormInput";
+import { Socket, io } from "socket.io-client";
 
 const APP_ID = import.meta.env.VITE_AGORA_APP_ID;
 const CHAT_APP_ID = import.meta.env.VITE_AGORA_CHAT_APP_ID;
@@ -50,6 +50,9 @@ const MeetingApp: React.FC = () => {
       codec: "vp8",
     })
   );
+  const [socket, setSocket] = useState<Socket>();
+  const [messages, setMessages] = useState<JSX.Element[]>([]);
+  const [message, setMessage] = useState("");
 
   const getMeeting = async () => {
     const url = `/meeting/get`;
@@ -88,8 +91,24 @@ const MeetingApp: React.FC = () => {
         }
       }
     };
+    const connectSocketServer = async () => {
+      const socket = io("http://localhost:3003");
+      console.log("Your socket id : ", socket.id);
+      socket.on("connect", () => {
+        console.log("You connected with id : " + socket.id);
+      });
+
+      socket.on("receive-message", (user, message) => {
+        console.log(`Message from server : ${message}`);
+        displayRemoteMessage(user, message);
+      });
+
+      socket.emit("join-room", meetingId);
+      return socket;
+    };
     const joinAndDisplayLocalScreen = async () => {
       if (uid) {
+        const socket = await connectSocketServer();
         client.on("user-published", handleRemoteUserJoin);
         client.on("user-left", handleUserLeft);
         client.on("user-unpublished", handleUserLeft);
@@ -125,6 +144,7 @@ const MeetingApp: React.FC = () => {
 
         setVideoStreams((prevStreams) => [...prevStreams, player]);
 
+        setSocket(socket);
         setClient(client);
         setLocalUid(UID);
         setLoading(false);
@@ -231,8 +251,22 @@ const MeetingApp: React.FC = () => {
     }
   };
 
+  const displayRemoteMessage = (user: string, message: string) => {
+    const div = (
+      <div>
+        {user} : {message}
+      </div>
+    );
+    setMessages((prevMessages) => [...prevMessages, div]);
+  };
+  const displayLocalMessage = (message: string) => {
+    const div = <div>You: {message}</div>;
+    setMessages((prevMessages) => [...prevMessages, div]);
+  };
+
   const onSubmitButtonClick = async () => {
-    // await clientRtm?.publish(CHAT_APP_ID, message);
+    socket?.emit("send-message", screenName, message, meetingId);
+    displayLocalMessage(message);
   };
 
   if (!isReady) {
@@ -270,24 +304,29 @@ const MeetingApp: React.FC = () => {
     <>
       <div>
         <button onClick={() => setVideoStreams([])}>Clear Streams</button>
-        <div id="video-streams">{videoStreams}</div>
         <div className="row">
-          <div className="col-8">
-            <button onClick={toggleMic}>
-              {micStatus ? "Mic On" : "Mic Off"}
-            </button>
-            <button onClick={toggleCam}>
-              {camStatus ? "Cam On" : "Cam Off"}
-            </button>
-            <button onClick={leaveAndRemoveLocalStream}>Leave</button>
-            <button>Participants {meeting?.participants.length}</button>
+          <div className="col-9">
+            <div className="row">
+              <div id="video-streams">{videoStreams}</div>
+            </div>
+            <div className="row">
+              <button onClick={toggleMic}>
+                {micStatus ? "Mic On" : "Mic Off"}
+              </button>
+              <button onClick={toggleCam}>
+                {camStatus ? "Cam On" : "Cam Off"}
+              </button>
+              <button onClick={leaveAndRemoveLocalStream}>Leave</button>
+              <button>Participants {meeting?.participants.length}</button>
+            </div>
           </div>
           <div className="col">
+            <div className="message-container">{messages}</div>
             <input
               type="text"
-              // onChange={(event) => {
-              //   setMessage(event.target.value);
-              // }}
+              onChange={(event) => {
+                setMessage(event.target.value);
+              }}
             />
             <button className="btn btn-primary" onClick={onSubmitButtonClick}>
               Submit
