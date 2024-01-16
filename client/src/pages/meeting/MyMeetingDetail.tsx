@@ -4,19 +4,7 @@ import { backendReqHandler } from "../../services/reqHandler";
 import { useNavigate, useParams } from "react-router-dom";
 import "./MyMeetingDetail.css";
 import coreFunctions from "../../core/functions";
-
-type Meeting = {
-  _id: string;
-  meetingId: string;
-  password: string;
-  topic: string;
-  plannedStartTime: Date;
-  startTime: Date;
-  endTime: Date;
-  isStarted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { MeetingDetail } from "../../models/meeting";
 
 type CardItemProps = {
   title: string;
@@ -33,7 +21,7 @@ const CardItem = (props: CardItemProps) => {
 };
 
 const MyMeetingDetail = () => {
-  const [meeting, setMeeting] = useState<Meeting>();
+  const [meeting, setMeeting] = useState<MeetingDetail>();
   const [loading, setLoading] = useState(true);
   const token = cookieHandler.getAuthCookie();
   const { id } = useParams();
@@ -57,9 +45,29 @@ const MyMeetingDetail = () => {
     return (
       <>
         <div className="my-card">
-          <div className="card text-bg-light">
+          <div className="card text-dark bg-light border-dark">
             <div className="card-header">
-              <h3>Meeting Details</h3>
+              <div className="row">
+                <h3 className="col-8">Meeting Details</h3>
+                <div className="col text-right">
+                  {meeting.isStarted && meeting.isActive ? (
+                    <a
+                      href={`/meeting?mid=${meeting.meetingId}&pwd=${meeting.password}`}
+                      className="btn btn-success"
+                    >
+                      Join Meeting
+                    </a>
+                  ) : null}
+                  {!meeting.isStarted && meeting.isActive ? (
+                    <a
+                      href={`/meeting?mid=${meeting.meetingId}&pwd=${meeting.password}`}
+                      className="btn btn-success"
+                    >
+                      Start Meeting
+                    </a>
+                  ) : null}
+                </div>
+              </div>
             </div>
             <div className="card-body">
               <div className="col">
@@ -92,22 +100,21 @@ const MyMeetingDetail = () => {
                         )
                       }
                     />
-                    <CardItem
-                      title="Ended At"
-                      text={
-                        coreFunctions.formatDate(meeting.endTime, "date") +
-                        " - " +
-                        coreFunctions.formatDate(
-                          meeting.plannedStartTime,
-                          "time"
-                        )
-                      }
-                    />
                   </>
+                ) : null}
+                {!meeting.isActive ? (
+                  <CardItem
+                    title="Ended At"
+                    text={
+                      coreFunctions.formatDate(meeting.endTime, "date") +
+                      " - " +
+                      coreFunctions.formatDate(meeting.plannedStartTime, "time")
+                    }
+                  />
                 ) : null}
               </div>
             </div>
-            <div className="card-footer">
+            <div className="card-footer card-inside">
               <span className="m-5">
                 <b>Created At :</b>{" "}
                 {coreFunctions.formatDate(meeting.createdAt, "dateAndTime")}

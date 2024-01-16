@@ -1,4 +1,4 @@
-import { ChangeEventHandler, HTMLInputTypeAttribute } from "react";
+import { ChangeEvent, ChangeEventHandler, HTMLInputTypeAttribute } from "react";
 
 interface Props {
   inputId: string;

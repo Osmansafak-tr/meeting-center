@@ -24,6 +24,12 @@ class RequestHandler {
     return response;
   }
 
+  async put(url: string, body: {}, headers = this.headers) {
+    const targetUrl = this.baseUrl + url;
+    const response = await axios.put(targetUrl, body, { headers: headers });
+    return response;
+  }
+
   async delete(url: string, headers = this.headers) {
     const targetUrl = this.baseUrl + url;
     const response = await axios.delete(targetUrl, { headers: headers });

@@ -17,4 +17,18 @@ type Meeting = {
   updatedAt: Date;
 };
 
-export type { Meeting };
+type MeetingDetail = {
+  _id: string;
+  meetingId: string;
+  password: string;
+  topic: string;
+  plannedStartTime: Date;
+  startTime: Date;
+  endTime: Date;
+  isActive: boolean;
+  isStarted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type { Meeting, MeetingDetail };

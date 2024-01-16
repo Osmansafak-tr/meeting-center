@@ -54,11 +54,30 @@ const Navbar = () => {
                 <Link text="Join Meeting" link="/meeting/join" />
               </li>
               {isAuthenticated ? (
-                <Link text="My Meetings" link="/myMeetings" />
+                <>
+                  <Link text="Profile" link="/profile" />
+                  <Link text="My Meetings" link="/myMeetings" />
+                </>
               ) : null}
             </ul>
-            <form className="d-flex">
+            <form className="d-flex gap-4">
               {isAuthenticated ? <LogoutButton /> : null}
+              {!isAuthenticated ? (
+                <>
+                  <a
+                    className="btn btn-success btn-round btn-lg"
+                    href="/account"
+                  >
+                    Login
+                  </a>
+                  <a
+                    className="btn btn-primary btn-round btn-lg"
+                    href="/account/register"
+                  >
+                    Register
+                  </a>
+                </>
+              ) : null}
             </form>
           </div>
         </div>

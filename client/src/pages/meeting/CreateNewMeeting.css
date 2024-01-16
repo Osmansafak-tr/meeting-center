@@ -1,9 +1,11 @@
 .form-new-meeting {
     width: 20rem;
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
+    padding: 3rem;
+    border: 2px solid #bbb9b9;
 }
 
 .btn-create{

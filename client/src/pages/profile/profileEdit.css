@@ -1,0 +1,9 @@
+.form-edit-profile {
+    width: 24rem;
+    padding: 3rem;
+    border: 2px solid #bbb9b9;
+}
+
+.form-edit-profile-header {
+    margin-bottom: 2rem;
+}

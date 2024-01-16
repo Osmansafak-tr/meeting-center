@@ -63,53 +63,55 @@ const Login = () => {
 
   return (
     <>
-      <div className="form-login">
-        <h2>Login Form</h2>
-        <form>
-          {/* Email input */}
-          <FormInput
-            inputId="email"
-            inputType="email"
-            placeholder="Your Email"
-            labelText="Email Address"
-            onChange={emailOnChange}
-            errorMessage={formErrors.email}
-          />
+      <div className="item-center">
+        <div className="form-login">
+          <h2>Login Form</h2>
+          <form>
+            {/* Email input */}
+            <FormInput
+              inputId="email"
+              inputType="email"
+              placeholder="Your Email"
+              labelText="Email Address"
+              onChange={emailOnChange}
+              errorMessage={formErrors.email}
+            />
 
-          {/* Password input */}
-          <FormInput
-            inputId="password"
-            inputType="password"
-            placeholder="Your Password"
-            labelText="Password"
-            onChange={passwordOnChange}
-            errorMessage={formErrors.password}
-          />
+            {/* Password input */}
+            <FormInput
+              inputId="password"
+              inputType="password"
+              placeholder="Your Password"
+              labelText="Password"
+              onChange={passwordOnChange}
+              errorMessage={formErrors.password}
+            />
 
-          <div className="col mb-2 text-right">
-            <a className="custom-link" href="#!">
-              Forgot password?
-            </a>
-          </div>
-
-          {/*Submit button*/}
-          <button
-            type="button"
-            className="btn btn-primary btn-block mb-4 btn-login"
-            onClick={buttonOnClick}
-          >
-            Sign in
-          </button>
-
-          <div className="col text-center">
-            <p>
-              Not a Member?{" "}
-              <a className="custom-link" href="/account/register">
-                Register
+            <div className="col mb-2 text-right">
+              <a className="custom-link" href="#!">
+                Forgot password?
               </a>
-            </p>
-          </div>
-        </form>
+            </div>
+
+            {/*Submit button*/}
+            <button
+              type="button"
+              className="btn btn-primary btn-block mb-4 btn-login"
+              onClick={buttonOnClick}
+            >
+              Sign in
+            </button>
+
+            <div className="col text-center">
+              <p>
+                Not a Member?{" "}
+                <a className="custom-link" href="/account/register">
+                  Register
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );
