@@ -41,10 +41,8 @@ exports.CreateMyMeeting = async (password, topic, plannedStartTime, userId) => {
   await MeetingMethods.create(model);
 };
 
-exports.UpdateMyMeeting = async (filter, password, topic, plannedStartTime) => {
-  const hashedPassword = await PasswordEncrypt.hash(password);
+exports.UpdateMyMeeting = async (filter, topic, plannedStartTime) => {
   const model = {
-    password: hashedPassword,
     topic: topic,
     plannedStartTime: plannedStartTime,
   };

@@ -34,6 +34,7 @@ const MeetingApp: React.FC = () => {
   const [remoteUsers, setRemoteUsers] = useState<number[]>([]);
   const [micStatus, setMicStatus] = useState<boolean>(true);
   const [camStatus, setCamStatus] = useState<boolean>(true);
+  const [chatStatus, setChatStatus] = useState<boolean>(true);
   const [videoStreams, setVideoStreams] = useState<JSX.Element[]>([]);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
@@ -102,7 +103,6 @@ const MeetingApp: React.FC = () => {
     };
     const connectSocketServer = async () => {
       const socket = io("http://localhost:3003");
-      console.log("Your socket id : ", socket.id);
       socket.on("connect", () => {
         console.log("You connected with id : " + socket.id);
       });
@@ -127,15 +127,23 @@ const MeetingApp: React.FC = () => {
             });
             user?.videoTrack?.play(`user-${uid}`);
           };
-          if (msg === "unmute-video") {
-            unmuteVideo();
+          const unmuteAudio = () => {
+            const user = client.remoteUsers.find((user) => {
+              return user.uid === uid;
+            });
+            user?.audioTrack?.play();
+          };
+          switch (msg) {
+            case "unmute-video":
+              unmuteVideo();
+              break;
           }
         });
         window.addEventListener("beforeunload", (ev) => {
-          const func = async () => {
+          const leave = async () => {
             await leaveAndRemoveLocalStream();
           };
-          func();
+          leave();
         });
 
         const UID = await client.join(APP_ID, meetingId, token, uid);
@@ -224,13 +232,16 @@ const MeetingApp: React.FC = () => {
 
   const handleUserLeft = async (user: any) => {
     const temp = remoteUsers.filter((value) => value != user.uid);
-    const meeting = await getMeeting();
-    setMeeting(meeting);
     setRemoteUsers(temp);
 
     setVideoStreams((prevStreams) =>
       prevStreams.filter((stream) => stream.key !== `${user.uid}`)
     );
+
+    setTimeout(async () => {
+      const meeting = await getMeeting();
+      setMeeting(meeting);
+    }, 500);
   };
 
   const leaveAndRemoveLocalStream = async () => {
@@ -247,6 +258,7 @@ const MeetingApp: React.FC = () => {
     };
     await backendReqHandler.post(url, body);
     await client.leave();
+    navigate("/");
   };
 
   const toggleMic = async () => {
@@ -261,14 +273,15 @@ const MeetingApp: React.FC = () => {
       setCamStatus((prevStatus) => !prevStatus);
     }
   };
+  const toggleChat = () => {
+    setChatStatus((prevStatus) => !prevStatus);
+  };
 
   const displayRemoteMessage = (user: string, message: string) => {
     const div = (
-      <div className="row">
-        <div className="message-remote">
-          <p className="message-author-remote">{user}</p>
-          <span>{message}</span>
-        </div>
+      <div className="message-remote">
+        <p className="message-author-remote">{user}</p>
+        <span>{message}</span>
       </div>
     );
     setMessages((prevMessages) => [...prevMessages, div]);
@@ -293,10 +306,6 @@ const MeetingApp: React.FC = () => {
       setScreenName(event.target.value);
     };
     const btnOnClick = () => {
-      const camStatusSwitch: any = document.getElementById("camStatusSwitch");
-      const micStatusSwitch: any = document.getElementById("micStatusSwitch");
-      setCamStatus(camStatusSwitch.checked);
-      setMicStatus(micStatusSwitch.checked);
       setIsReady(true);
     };
 
@@ -312,26 +321,6 @@ const MeetingApp: React.FC = () => {
             placeholder="Your Meeting Name"
             errorMessage=""
           />
-          <div className="form-check form-switch mb-4">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="camStatusSwitch"
-            />
-            <label className="form-check-label" htmlFor="camStatusSwitch">
-              Cam Status
-            </label>
-          </div>
-          <div className="form-check form-switch mb-4">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="micStatusSwitch"
-            />
-            <label className="form-check-label" htmlFor="micStatusSwitch">
-              Mic Status
-            </label>
-          </div>
 
           <button className="btn btn-primary" onClick={btnOnClick}>
             Enter Meeting
@@ -350,7 +339,7 @@ const MeetingApp: React.FC = () => {
       <div id="body">
         <div className="container-fluid">
           <div className="row">
-            <div className="col-9">
+            <div className="col">
               <div className="row">
                 <div id="video-streams">{videoStreams}</div>
               </div>
@@ -366,37 +355,45 @@ const MeetingApp: React.FC = () => {
                 </button>
                 <button onClick={leaveAndRemoveLocalStream}>Leave</button>
                 <button>Participants {meeting?.participants.length}</button>
-              </div>
-            </div>
-            <div className="col">
-              <div className="message-container row">
-                <div className="col">
-                  <div className="message-local">
-                    <p className="message-author-local">user</p>
-                    <span>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Consequatur fugiat libero sint, quam labore molestias?
-                      Quasi, eligendi. Recusandae in nisi illo eveniet assumenda
-                      quaerat excepturi.
-                    </span>
-                  </div>
-                  {messages}
-                </div>
-              </div>
-              <div className="row">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="message-input"
-                  onChange={(event) => {
-                    setMessage(event.target.value);
-                  }}
-                />
-                <button className="btn btn-dark" onClick={onSubmitButtonClick}>
-                  Submit
+                <button onClick={toggleChat}>
+                  {chatStatus ? "Chat On" : "Chat Off"}
                 </button>
               </div>
             </div>
+            {chatStatus ? (
+              <div className="col-3">
+                <div className="message-container row">
+                  <div className="col">
+                    <div className="message-local">
+                      <p className="message-author-local">user</p>
+                      <span>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Consequatur fugiat libero sint, quam labore molestias?
+                        Quasi, eligendi. Recusandae in nisi illo eveniet
+                        assumenda quaerat excepturi.
+                      </span>
+                    </div>
+                    {messages}
+                  </div>
+                </div>
+                <div className="row">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="message-input"
+                    onChange={(event) => {
+                      setMessage(event.target.value);
+                    }}
+                  />
+                  <button
+                    className="btn btn-dark"
+                    onClick={onSubmitButtonClick}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

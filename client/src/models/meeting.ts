@@ -31,4 +31,9 @@ type MeetingDetail = {
   updatedAt: Date;
 };
 
-export type { Meeting, MeetingDetail };
+type MeetingUpdate = {
+  topic: string;
+  plannedStartTime: Date;
+};
+
+export type { Meeting, MeetingDetail, MeetingUpdate };

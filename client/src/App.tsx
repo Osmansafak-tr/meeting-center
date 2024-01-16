@@ -13,6 +13,7 @@ import MyMeetingDetail from "./pages/meeting/MyMeetingDetail";
 import CreateNewMeeting from "./pages/meeting/CreateNewMeeting";
 import Profile from "./pages/profile/Profile";
 import ProfileEdit from "./pages/profile/ProfileEdit";
+import EditMyMeeting from "./pages/meeting/EditMyMeeting";
 
 function App() {
   const { verifyAuth } = useAuth();
@@ -45,6 +46,10 @@ function App() {
           <Route path="/myMeetings" element={<MyMeetings />}></Route>
           <Route path="/myMeetings/new" element={<CreateNewMeeting />}></Route>
           <Route path="/myMeetings/:id" element={<MyMeetingDetail />}></Route>
+          <Route
+            path="/myMeetings/edit/:id"
+            element={<EditMyMeeting />}
+          ></Route>
         </Route>
 
         <Route path="*" element={<PageNotFound />}></Route>

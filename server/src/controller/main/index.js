@@ -27,9 +27,9 @@ exports.CreateMyMeeting = async (req, res) => {
 exports.UpdateMyMeeting = async (req, res) => {
   const userId = req.user._id;
   const { id } = req.params;
-  const { password, topic, plannedStartTime } = req.body;
+  const { topic, plannedStartTime } = req.body;
   const filter = { _id: id, userId: userId };
-  await command.UpdateMyMeeting(filter, password, topic, plannedStartTime);
+  await command.UpdateMyMeeting(filter, topic, plannedStartTime);
   return res.status(200).json("Meeting updated");
 };
 

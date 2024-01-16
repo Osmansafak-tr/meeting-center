@@ -38,7 +38,7 @@ const CreateNewMeeting = () => {
   return (
     <>
       <div className="form-new-meeting">
-        <h2>Join Meeting</h2>
+        <h2>Create New Meeting</h2>
         <div>
           <FormInput
             inputId="topic"

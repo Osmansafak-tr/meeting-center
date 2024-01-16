@@ -53,6 +53,7 @@ const MyMeetingDetail = () => {
                   {meeting.isStarted && meeting.isActive ? (
                     <a
                       href={`/meeting?mid=${meeting.meetingId}&pwd=${meeting.password}`}
+                      target="_blank"
                       className="btn btn-success"
                     >
                       Join Meeting
