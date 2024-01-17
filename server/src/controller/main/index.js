@@ -33,6 +33,15 @@ exports.UpdateMyMeeting = async (req, res) => {
   return res.status(200).json("Meeting updated");
 };
 
+exports.UpdateMyMeetingPassword = async (req, res) => {
+  const userId = req.user._id;
+  const { id } = req.params;
+  const { password } = req.body;
+  const filter = { _id: id, userId: userId };
+  await command.UpdateMyMeetingPassword(filter, password);
+  return res.status(200).json("Meeting updated");
+};
+
 exports.DeleteMyMeeting = async (req, res) => {
   const userId = req.user._id;
   const { id } = req.params;

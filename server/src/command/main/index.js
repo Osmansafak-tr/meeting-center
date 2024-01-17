@@ -49,6 +49,14 @@ exports.UpdateMyMeeting = async (filter, topic, plannedStartTime) => {
   await MeetingMethods.update(filter, model);
 };
 
+exports.UpdateMyMeetingPassword = async (filter, password) => {
+  const hashedPassword = PasswordEncrypt.hash(password);
+  const model = {
+    password: hashedPassword,
+  };
+  await MeetingMethods.update(filter, model);
+};
+
 exports.DeleteMyMeeting = async (id, userId) => {
   const filter = { _id: id, userId: userId };
   await MeetingMethods.delete(filter);

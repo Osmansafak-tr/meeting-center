@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import cookieHandler from "../../services/cookieHandler";
 import { backendReqHandler } from "../../services/reqHandler";
 import { useNavigate, useParams } from "react-router-dom";
 import "./MyMeetingDetail.css";
 import coreFunctions from "../../core/functions";
 import { MeetingDetail } from "../../models/meeting";
+import FormInput from "../../components/FormInput";
 
 type CardItemProps = {
   title: string;
@@ -20,6 +21,79 @@ const CardItem = (props: CardItemProps) => {
   );
 };
 
+type PopupProps = {
+  modalId: string;
+  _id: string;
+};
+const ChangePasswordPopup = (props: PopupProps) => {
+  const { modalId, _id } = props;
+  const [password, setPassword] = useState("");
+
+  const onPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+  const onCloseClick = () => {
+    setPassword("");
+    const passwordInput: any = document.getElementById("passwordInput");
+    if (passwordInput) passwordInput.value = "";
+    const element = document.getElementById(modalId);
+    if (element) element.style.display = "none";
+  };
+  const onChangeButtonClick = async () => {
+    if (password == "") return;
+
+    const body = {
+      password: password,
+    };
+    await backendReqHandler.put(`/meetings/password/${_id}`, body);
+    onCloseClick();
+  };
+
+  return (
+    <>
+      <div id={modalId} className="modal">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h2>Change Meeting Password</h2>
+            <span className="close" onClick={onCloseClick}>
+              &times;
+            </span>
+          </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <div className="modal-body">
+              <p>Please enter your meetings new password.</p>
+              <FormInput
+                inputId="passwordInput"
+                inputType="password"
+                placeholder="Meeting Password"
+                labelText="New Meeting Password"
+                onChange={onPasswordChange}
+                errorMessage=""
+              />
+            </div>
+            <div className="my-modal-footer">
+              <div className="d-grid d-sm-flex gap-5 justify-content-center p-3">
+                <button
+                  className="btn btn-primary"
+                  onClick={onChangeButtonClick}
+                >
+                  Change
+                </button>
+                <a className="btn btn-danger" onClick={onCloseClick}>
+                  Cancel
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+};
 const MyMeetingDetail = () => {
   const [meeting, setMeeting] = useState<MeetingDetail>();
   const [loading, setLoading] = useState(true);
@@ -44,6 +118,7 @@ const MyMeetingDetail = () => {
   if (meeting) {
     return (
       <>
+        <ChangePasswordPopup modalId="changePasswordModal" _id={id ?? ""} />
         <div className="my-card">
           <div className="card text-dark bg-light border-dark">
             <div className="card-header">
@@ -85,7 +160,17 @@ const MyMeetingDetail = () => {
                   <h5 className="card-title col-4">Password</h5>
                   <div className="col">
                     <span className="card-text">******</span>
-                    <a className="btn btn-primary btn-sm mx-3">Change</a>
+                    <button
+                      className="btn btn-primary btn-sm mx-3"
+                      onClick={() => {
+                        var element = document.getElementById(
+                          "changePasswordModal"
+                        );
+                        if (element) element.style.display = "block";
+                      }}
+                    >
+                      Change
+                    </button>
                   </div>
                 </div>
                 {meeting.isStarted == true ? (

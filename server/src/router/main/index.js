@@ -12,6 +12,11 @@ routerHandler.get("/meetings/:id", controller.GetMyMeetingById, userAuthorize);
 routerHandler.post("/meetings", controller.CreateMyMeeting, userAuthorize);
 
 routerHandler.put("/meetings/:id", controller.UpdateMyMeeting, userAuthorize);
+routerHandler.put(
+  "/meetings/password/:id",
+  controller.UpdateMyMeetingPassword,
+  userAuthorize
+);
 
 routerHandler.del("/meetings/:id", controller.DeleteMyMeeting, userAuthorize);
 
