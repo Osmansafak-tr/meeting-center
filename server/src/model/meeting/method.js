@@ -25,6 +25,7 @@ exports.create = async (model) => {
 exports.update = async (filter, model) => {
   let meeting = await this.getOne(filter);
   if (meeting == null) throw new Error("Meeting can not found.");
+  meeting.updatedAt = Date.now();
   updateObject(meeting, model);
   await meeting.save();
 };

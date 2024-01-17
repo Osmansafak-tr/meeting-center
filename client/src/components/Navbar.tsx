@@ -50,15 +50,15 @@ const Navbar = () => {
               <li className="nav-item">
                 <Link text="Home" link="/" />
               </li>
-              <li className="nav-item">
-                <Link text="Join Meeting" link="/meeting/join" />
-              </li>
               {isAuthenticated ? (
                 <>
                   <Link text="Profile" link="/profile" />
                   <Link text="My Meetings" link="/myMeetings" />
                 </>
               ) : null}
+              <li className="nav-item">
+                <Link text="Join Meeting" link="/meeting/join" />
+              </li>
             </ul>
             <form className="d-flex gap-4">
               {isAuthenticated ? <LogoutButton /> : null}

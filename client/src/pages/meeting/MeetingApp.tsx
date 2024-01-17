@@ -35,6 +35,7 @@ const MeetingApp: React.FC = () => {
   const [micStatus, setMicStatus] = useState<boolean>(true);
   const [camStatus, setCamStatus] = useState<boolean>(true);
   const [chatStatus, setChatStatus] = useState<boolean>(true);
+  const [participantsStatus, setParticipantsStatus] = useState(false);
   const [videoStreams, setVideoStreams] = useState<JSX.Element[]>([]);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
@@ -274,7 +275,12 @@ const MeetingApp: React.FC = () => {
     }
   };
   const toggleChat = () => {
+    if (!chatStatus) setParticipantsStatus(false);
     setChatStatus((prevStatus) => !prevStatus);
+  };
+  const toggleParticipants = () => {
+    if (!participantsStatus) setChatStatus(false);
+    setParticipantsStatus((prevStatus) => !prevStatus);
   };
 
   const displayRemoteMessage = (user: string, message: string) => {
@@ -347,34 +353,50 @@ const MeetingApp: React.FC = () => {
                 className="d-grid gap-3 d-sm-flex justify-content-md-center"
                 id="stream-actions"
               >
-                <button onClick={toggleMic}>
-                  {micStatus ? "Mic On" : "Mic Off"}
+                <button
+                  className={micStatus ? "active" : ""}
+                  onClick={toggleMic}
+                >
+                  <img
+                    src="../../../icons/microphone-solid.svg"
+                    alt=""
+                    width={24}
+                  />
                 </button>
-                <button onClick={toggleCam}>
-                  {camStatus ? "Cam On" : "Cam Off"}
+                <button
+                  className={camStatus ? "active" : ""}
+                  onClick={toggleCam}
+                >
+                  <img
+                    src="../../../icons/camera-solid.svg"
+                    alt=""
+                    width={24}
+                  />
                 </button>
                 <button onClick={leaveAndRemoveLocalStream}>Leave</button>
-                <button>Participants {meeting?.participants.length}</button>
-                <button onClick={toggleChat}>
-                  {chatStatus ? "Chat On" : "Chat Off"}
+                <button
+                  className={participantsStatus ? "active" : ""}
+                  onClick={toggleParticipants}
+                >
+                  <img src="../../../icons/users-solid.svg" alt="" width={24} />
+                  <span className="mx-2">{meeting?.participants.length}</span>
+                </button>
+                <button
+                  className={chatStatus ? "active" : ""}
+                  onClick={toggleChat}
+                >
+                  <img
+                    src="../../../icons/comment-regular.svg"
+                    alt=""
+                    width={24}
+                  />
                 </button>
               </div>
             </div>
             {chatStatus ? (
               <div className="col-3">
                 <div className="message-container row">
-                  <div className="col">
-                    <div className="message-local">
-                      <p className="message-author-local">user</p>
-                      <span>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Consequatur fugiat libero sint, quam labore molestias?
-                        Quasi, eligendi. Recusandae in nisi illo eveniet
-                        assumenda quaerat excepturi.
-                      </span>
-                    </div>
-                    {messages}
-                  </div>
+                  <div className="col">{messages}</div>
                 </div>
                 <div className="row">
                   <input
@@ -391,6 +413,19 @@ const MeetingApp: React.FC = () => {
                   >
                     Submit
                   </button>
+                </div>
+              </div>
+            ) : null}
+            {participantsStatus ? (
+              <div className="col-3">
+                <div className="participants-container col">
+                  {meeting?.participants.map((participant, index) => (
+                    <div className="row" key={index}>
+                      <p>
+                        Participant {index + 1} : {participant.name}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             ) : null}

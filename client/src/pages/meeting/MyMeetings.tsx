@@ -39,15 +39,39 @@ const MyMeetings = () => {
     };
     if (loading) fetch();
   }, []);
-  // const onDeleteMeetingClick = async (meetingId: string) => {
-  //   return async (event: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-  //     const url = `/meetings/${meetingId}`;
-  //   await backendReqHandler.delete(url);
-  //   window.location.reload();
-  //   }
-  // };
 
   if (loading) return <div>Loading...</div>;
+
+  if (meetings?.length == 0)
+    return (
+      <>
+        <Navbar />
+        <div className="meeting-table">
+          <table className="table">
+            <thead className="thead-dark">
+              <tr>
+                <th colSpan={4}>
+                  <div className="row">
+                    <span className="col">My Meetings</span>
+                    <div className="col text-right">
+                      <a href="/myMeetings/new" className="btn btn-info ">
+                        {" "}
+                        + New Meeting
+                      </a>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan={4}>There are no meetings right now.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </>
+    );
 
   return (
     <>
@@ -114,7 +138,6 @@ const MyMeetings = () => {
           </tbody>
         </table>
       </div>
-      <div></div>
     </>
   );
 };

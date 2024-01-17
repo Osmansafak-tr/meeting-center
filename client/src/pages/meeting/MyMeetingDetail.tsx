@@ -62,6 +62,7 @@ const ChangePasswordPopup = (props: PopupProps) => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              window.location.reload();
             }}
           >
             <div className="modal-body">
@@ -137,6 +138,7 @@ const MyMeetingDetail = () => {
                   {!meeting.isStarted && meeting.isActive ? (
                     <a
                       href={`/meeting?mid=${meeting.meetingId}&pwd=${meeting.password}`}
+                      target="_blank"
                       className="btn btn-success"
                     >
                       Start Meeting
@@ -207,7 +209,7 @@ const MyMeetingDetail = () => {
               </span>
               <span className="m-5">
                 <b>Last Updated At :</b>{" "}
-                {coreFunctions.formatDate(meeting.createdAt, "dateAndTime")}
+                {coreFunctions.formatDate(meeting.updatedAt, "dateAndTime")}
               </span>
             </div>
           </div>
