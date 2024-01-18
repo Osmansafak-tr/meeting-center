@@ -14,6 +14,10 @@ const userSchema = mongoose.Schema({
     required: true,
   },
 
+  screenName: {
+    type: String,
+    default: "",
+  },
   name: {
     type: String,
     default: "",

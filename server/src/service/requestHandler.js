@@ -31,4 +31,8 @@ exports.tokenService = new RequestHandler(process.env.TOKEN_API_URL, {
   Authorization: `${process.env.TOKEN_API_SHARED_SECRET_KEY}`,
 });
 
+exports.agoraApiReqHandler = new RequestHandler(process.env.AGORA_API_URL, {
+  "x-api-key": `${process.env.AGORA_API_SHARED_SECRET_KEY}`,
+});
+
 // module.exports = RequestHandler;

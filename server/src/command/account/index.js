@@ -1,8 +1,8 @@
-const { UserMethods } = require("../../../model");
-const { RequestHandler, PasswordEncrypt } = require("../../../service");
-const { AppError } = require("../../../common/class");
+const { UserMethods } = require("../../model");
+const { RequestHandler, PasswordEncrypt } = require("../../service");
+const { AppError } = require("../../common/class");
 const { INVALID_EMAIL, INVALID_USERNAME } =
-  require("../../../common/constant").ErrorConstants;
+  require("../../common/constant").ErrorConstants;
 const requestHandler = RequestHandler.tokenService;
 
 const checkSameData = async (
@@ -61,12 +61,12 @@ exports.Login = async (email, password) => {
 };
 
 exports.Logout = async (userId, refreshToken) => {
+  // delete refreshToken from database
+  const url = "/token/" + refreshToken;
+  await requestHandler.delete(url);
+
   // update users refresh token
   const filter = { _id: userId };
   const model = { refreshToken: "" };
   await UserMethods.updateOne(filter, model);
-
-  // delete refreshToken from database
-  const url = "/token/" + refreshToken;
-  await requestHandler.delete(url);
 };

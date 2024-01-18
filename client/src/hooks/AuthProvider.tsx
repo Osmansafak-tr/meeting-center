@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const verifyAuth = async () => {
     const accessToken = cookieHandler.getAuthCookie();
-    console.log(accessToken);
     if (!accessToken) return;
     try {
       const url = `/account/auth/verify/${accessToken}`;

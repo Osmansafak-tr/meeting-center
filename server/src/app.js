@@ -25,7 +25,9 @@ app.use(bodyParser.json());
 
 const routers = require("./router");
 app.use("*", apiAuth, userAuthenticate);
+app.use("/", routers.MainRouter);
 app.use("/account", routers.AccountRouter);
+app.use("/profile", routers.ProfileRouter);
 
 app.use(errorHandler);
 

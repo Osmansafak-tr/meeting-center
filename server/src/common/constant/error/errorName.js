@@ -3,4 +3,5 @@ module.exports = {
   FORM: "FormError",
   DATA: "DataError",
   VALIDATION: "ValidationError",
+  MEETING: "MeetingError",
 };

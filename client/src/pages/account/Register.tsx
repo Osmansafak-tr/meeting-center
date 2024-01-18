@@ -83,68 +83,72 @@ const Register = () => {
 
   return (
     <>
-      <div className="form-register">
-        <h2>Login Form</h2>
-        <form>
-          {/* Username input */}
-          <FormInput
-            inputId="username"
-            inputType="text"
-            placeholder="Your Email"
-            labelText="Username*"
-            onChange={usernameOnChange}
-            errorMessage={formErrors.username}
-          />
+      <div className="item-center">
+        <div className="form-register">
+          <h2>Register Form</h2>
+          <form>
+            {/* Username input */}
+            <FormInput
+              inputId="username"
+              inputType="text"
+              placeholder="Your Email"
+              labelText="Username*"
+              onChange={usernameOnChange}
+              errorMessage={formErrors.username}
+            />
 
-          {/* Email input */}
-          <FormInput
-            inputId="email"
-            inputType="email"
-            placeholder="Your Email"
-            labelText="Email Address*"
-            onChange={emailOnChange}
-            errorMessage={formErrors.email}
-          />
+            {/* Email input */}
+            <FormInput
+              inputId="email"
+              inputType="email"
+              placeholder="Your Email"
+              labelText="Email Address*"
+              onChange={emailOnChange}
+              errorMessage={formErrors.email}
+            />
 
-          {/* Password input */}
-          <FormInput
-            inputId="password"
-            inputType="password"
-            placeholder="Your Password"
-            labelText="Password*"
-            onChange={passwordOnChange}
-            errorMessage={formErrors.password}
-          />
+            {/* Password input */}
+            <FormInput
+              inputId="password"
+              inputType="password"
+              placeholder="Your Password"
+              labelText="Password*"
+              onChange={passwordOnChange}
+              errorMessage={formErrors.password}
+            />
 
-          {/* Name input */}
-          <FormInput
-            inputId="name"
-            inputType="text"
-            placeholder="Your Name"
-            labelText="Name"
-            onChange={nameOnChange}
-            errorMessage={formErrors.name}
-          />
+            {/* Name input */}
+            <FormInput
+              inputId="name"
+              inputType="text"
+              placeholder="Your Name"
+              labelText="Name"
+              onChange={nameOnChange}
+              errorMessage={formErrors.name}
+              isRequired={false}
+            />
 
-          {/* Surname input */}
-          <FormInput
-            inputId="surname"
-            inputType="text"
-            placeholder="Your Surname"
-            labelText="Surname"
-            onChange={surnameOnChange}
-            errorMessage={formErrors.surname}
-          />
+            {/* Surname input */}
+            <FormInput
+              inputId="surname"
+              inputType="text"
+              placeholder="Your Surname"
+              labelText="Surname"
+              onChange={surnameOnChange}
+              errorMessage={formErrors.surname}
+              isRequired={false}
+            />
 
-          {/*Submit button*/}
-          <button
-            type="button"
-            className="btn btn-primary btn-block mb-4 btn-login"
-            onClick={buttonOnClick}
-          >
-            Register
-          </button>
-        </form>
+            {/*Submit button*/}
+            <button
+              type="button"
+              className="btn btn-primary btn-block mb-4 btn-login"
+              onClick={buttonOnClick}
+            >
+              Register
+            </button>
+          </form>
+        </div>
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 const User = require("./index");
-const { checkValidValue } = require("../function");
+const { updateObject } = require("../function");
 const { AppError } = require("../../common/class");
 const { DATA_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD } =
   require("../../common/constant").ErrorConstants;
@@ -29,11 +29,8 @@ exports.createOne = async (model) => {
 };
 
 exports.updateOne = async (filter, model) => {
-  const user = await this.getOne({ filter: filter });
-  user.name = checkValidValue(user.name, model.name);
-  user.surname = checkValidValue(user.surname, model.surname);
-  user.refreshToken = checkValidValue(user.refreshToken, model.refreshToken);
-  user.updatedAt = Date.now();
+  let user = await this.getOne({ filter: filter });
+  updateObject(user, model);
   await user.save();
 };
 

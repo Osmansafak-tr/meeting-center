@@ -1,0 +1,113 @@
+#body {
+    background-color: #1a1a1a;
+    color: #fff;
+    min-height: 100%;
+}
+
+#video-streams{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    height: 90vh;
+    width: 100%;
+    padding: 0;
+}
+
+#stream-actions a.active,
+#stream-actions button.active,
+#stream-actions a:hover,
+#stream-actions button:hover {
+  background-color: #845695;
+}
+
+#stream-actions button {
+  cursor: pointer;
+  background-color: #50504e;
+  color: #fff;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1rem;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+}
+
+#stream-actions button svg{
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: #ede0e0;
+  }
+
+.video-container{
+    height: 100%;
+    border: 2px solid black;
+    background-color: #1a1a1a;
+}
+
+.video-player{
+    width: 100%;
+    height: 100%;
+}
+
+#stream-controls{
+    display: none;
+}
+
+.prepare-form {
+    width: 20rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.message-container {
+    height: calc(100vh - 85px);
+    background-color: #262625;
+    right: 0;
+    max-width: 27rem;
+    overflow-y: auto;
+    border-left: 1px solid #111;
+}
+
+#message-input {
+    background-color: #313130; 
+    color: white;
+}
+
+.message-author-remote {
+    color: rgb(12, 106, 213);
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.message-author-local {
+    color: rgb(50, 171, 9);
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.message-remote {
+    max-width: 14rem;
+    padding: 5px 5px;
+    background-color: rgba(86, 84, 84, 0.784);
+    margin-left: 1rem;
+    margin-top: 1rem;
+    right: 0;
+}
+
+.message-local {
+    max-width: 14rem;
+    padding: 5px 5px;
+    background-color: rgba(0, 119, 255, 0.197);
+    margin-left: auto;
+    margin-right: 1rem;
+    margin-top: 1rem;
+}
+
+.participants-container {
+    background-color: #262625;
+    right: 0;
+    overflow-y: auto;
+    border-left: 1px solid #111;
+    height: 100%;
+}
