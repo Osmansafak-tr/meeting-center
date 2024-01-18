@@ -421,7 +421,7 @@ const MeetingApp: React.FC = () => {
                 <div className="participants-container col">
                   {meeting?.participants.map((participant, index) => (
                     <div className="row" key={index}>
-                      <p>
+                      <p className="fs-5">
                         Participant {index + 1} : {participant.name}
                       </p>
                     </div>

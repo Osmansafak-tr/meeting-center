@@ -125,6 +125,7 @@ const Register = () => {
               labelText="Name"
               onChange={nameOnChange}
               errorMessage={formErrors.name}
+              isRequired={false}
             />
 
             {/* Surname input */}
@@ -135,6 +136,7 @@ const Register = () => {
               labelText="Surname"
               onChange={surnameOnChange}
               errorMessage={formErrors.surname}
+              isRequired={false}
             />
 
             {/*Submit button*/}

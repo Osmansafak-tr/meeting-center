@@ -179,25 +179,20 @@ const MyMeetingDetail = () => {
                   <>
                     <CardItem
                       title="Started At"
-                      text={
-                        coreFunctions.formatDate(meeting.startTime, "date") +
-                        " - " +
-                        coreFunctions.formatDate(
-                          meeting.plannedStartTime,
-                          "time"
-                        )
-                      }
+                      text={coreFunctions.formatDate(
+                        meeting.startTime,
+                        "dateAndTime"
+                      )}
                     />
                   </>
                 ) : null}
                 {!meeting.isActive ? (
                   <CardItem
                     title="Ended At"
-                    text={
-                      coreFunctions.formatDate(meeting.endTime, "date") +
-                      " - " +
-                      coreFunctions.formatDate(meeting.plannedStartTime, "time")
-                    }
+                    text={coreFunctions.formatDate(
+                      meeting.endTime,
+                      "dateAndTime"
+                    )}
                   />
                 ) : null}
               </div>
